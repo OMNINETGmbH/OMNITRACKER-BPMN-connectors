@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectorPackage guid="{2a32c1ff-e6ff-42e4-9827-33d194113388}" category="FTP Server" language="PowerShell">
+  <script>
+    <![CDATA[
+if ($ctx.ConnectorName -eq 'Download File')
+{
+# Important Parameters
+$Username		= $ctx.Input('FTP User')
+$Password 		= $ctx.Input('Password')
+$LocalFile 		= $ctx.Input('Local Path')
+$RemoteFile 	= $ctx.Input('FTP Path')
+ 
+# Create a FTPWebRequest 
+$FTPRequest = [System.Net.FtpWebRequest]::Create($RemoteFile) 
+$FTPRequest.Credentials = New-Object System.Net.NetworkCredential($Username,$Password) 
+$FTPRequest.Method = [System.Net.WebRequestMethods+Ftp]::DownloadFile 
+$FTPRequest.UseBinary = $true 
+$FTPRequest.KeepAlive = $false
+# Send the ftp request
+$FTPResponse = $FTPRequest.GetResponse() 
+# Get a download stream from the server response 
+$ResponseStream = $FTPResponse.GetResponseStream() 
+# Create the target file on the local system and the download buffer 
+$LocalFileFile = New-Object IO.FileStream ($LocalFile,[IO.FileMode]::Create) 
+[byte[]]$ReadBuffer = New-Object byte[] 1024 
+# Loop through the download stream and send the data to target file
+	do { 
+		$ReadLength = $ResponseStream.Read($ReadBuffer,0,1024) 
+		$LocalFileFile.Write($ReadBuffer,0,$ReadLength) 
+	} 
+	while ($ReadLength -ne 0)	
+$LocalFileFile.close()
+}
+if ($ctx.ConnectorName -eq 'Upload File')
+{
+# Config
+$Username	= $ctx.Input('FTP User')
+$Password 	= $ctx.Input('Password')
+$LocalFile 	= $ctx.Input('Local Path')
+$RemoteFile = $ctx.Input('FTP Path')
+
+# Create FTP Rquest Object
+$FTPRequest = [System.Net.FtpWebRequest]::Create($RemoteFile)
+$FTPRequest = [System.Net.FtpWebRequest]$FTPRequest
+$FTPRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+$FTPRequest.Credentials = new-object System.Net.NetworkCredential($Username, $Password)
+$FTPRequest.UseBinary = $true
+$FTPRequest.UsePassive = $true
+# Read the File for Upload
+if((Get-Item $LocalFile).length -gt 0kb){
+    $FileContent = [System.IO.File]::ReadAllBytes($LocalFile)
+    $FTPRequest.ContentLength = $FileContent.Length
+    # Get Stream Request by bytes
+    $Run = $FTPRequest.GetRequestStream()
+    $Run.Write($FileContent, 0, $FileContent.Length)
+    # Cleanup
+    $Run.Close()
+    $Run.Dispose()
+    }
+else{
+   $ctx.LogMessage('Warning: File has to be larger than 0 kb')
+    }
+} 
+]]>
+  </script>
+  <connectors>
+    <connector name="Upload File" description="Upload file to FTP server" guid="e94627d0-497f-4935-9fd9-12b9fe83824f">
+      <input>
+        <inputParameter name="FTP Path" type="String" isArray="false" description="Please use this format 'ftp://path'" priority="1"/>
+        <inputParameter name="Local Path" type="String" isArray="false" description="Please use this format 'c:\folder'" priority="2"/>
+        <inputParameter name="FTP User" type="String" isArray="false" description="Specify your FTP User" priority="3"/>
+        <inputParameter name="Password" type="String" isArray="false" description="FTP User password" priority="4"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Download File" description="Download file from FTP server" guid="e94627d0-497f-4935-9fd9-12b9fe83333f">
+      <input>
+        <inputParameter name="FTP Path" type="String" isArray="false" description="Please use this format 'ftp://path'" priority="1"/>
+        <inputParameter name="Local Path" type="String" isArray="false" description="Please use this format 'c:\folder='" priority="2"/>
+        <inputParameter name="FTP User" type="String" isArray="false" description="Specify your FTP User" priority="3"/>
+        <inputParameter name="Password" type="String" isArray="false" description="FTP User password" priority="4"/>
+      </input>
+      <output/>
+    </connector>
+  </connectors>
+</connectorPackage>
