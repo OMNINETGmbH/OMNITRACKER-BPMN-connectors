@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectorPackage guid="{2a32c1ff-e6ff-42e4-9827-33d194113366}" category="Exchange Server" language="PowerShell">
+  <script>
+    <![CDATA[
+if ($ctx.ConnectorName -eq 'Add new mailbox')
+{ 
+# User Credentials
+$secpasswd = ConvertTo-SecureString $ctx.Input('Exchange Password') -AsPlainText -Force
+$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Exchange User'), $secpasswd)
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri $ctx.Input('Connection URI') -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -AllowClobber
+
+# Important parameters       
+$Password 		= $ctx.Input('Password')
+$Name			= $ctx.Input('Name')
+$Email			= $ctx.Input('Email')
+$Database = $ctx.Input('Database')
+
+# Creating new Mailbox Account
+New-Mailbox -Name $Name -UserPrincipalName $Email -Password (ConvertTo-SecureString -String $Password -AsPlainText -Force) -Database $Database -ResetPasswordOnNextLogon $true -Confirm:$false
+
+#Close Session
+$Session | Remove-PSSession
+}
+if ($ctx.ConnectorName -eq 'Delete mailbox')
+{
+# User Credentials
+$secpasswd = ConvertTo-SecureString $ctx.Input('Exchange Password') -AsPlainText -Force
+$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Exchange User'), $secpasswd)
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri $ctx.Input('Connection URI') -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -AllowClobber
+
+# Important parameters       
+$Name			= $ctx.Input('Name')
+
+# Deleting Mailbox Account
+Remove-Mailbox -Identity $Name -Confirm:$false
+
+#Close Session
+$Session | Remove-PSSession
+}
+if ($ctx.ConnectorName -eq 'Add distribution mail group')
+{
+# User Credentials
+$secpasswd = ConvertTo-SecureString $ctx.Input('Exchange Password') -AsPlainText -Force
+$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Exchange User'), $secpasswd)
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri $ctx.Input('Connection URI') -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -AllowClobber
+
+# Important parameters       
+$Name			= $ctx.Input('Distribution group name')     
+    
+# Creating Distribution Group
+New-DistributionGroup -Name $Name -Confirm:$false
+
+#Close Session
+$Session | Remove-PSSession
+}
+if ($ctx.ConnectorName -eq 'Delete distribution mail group')
+{
+# User Credentials
+$secpasswd = ConvertTo-SecureString $ctx.Input('Exchange Password') -AsPlainText -Force
+$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Exchange User'), $secpasswd)
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri $ctx.Input('Connection URI') -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -AllowClobber
+
+# Important parameters       
+$Name			= $ctx.Input('Distribution group name')     
+
+# Deleting Distribution Group
+Remove-DistributionGroup -Identity $Name -Confirm:$false
+
+#Close Session
+$Session | Remove-PSSession
+}
+if ($ctx.ConnectorName -eq 'Add new member to distribution mail group')
+{
+# User Credentials
+$secpasswd = ConvertTo-SecureString $ctx.Input('Exchange Password') -AsPlainText -Force
+$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Exchange User'), $secpasswd)
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri $ctx.Input('Connection URI') -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -AllowClobber
+
+# Important parameters       
+$Email			= $ctx.Input('Email of member')
+$Group			= $ctx.Input('Distribution group name')       
+
+# Add member to an existing distribution groupe
+Add-DistributionGroupMember -Identity $Group -Member $Email -Confirm:$false
+
+#Close Session
+$Session | Remove-PSSession
+}
+if ($ctx.ConnectorName -eq 'Delete member from distribution mail group')
+{
+# User Credentials
+$secpasswd = ConvertTo-SecureString $ctx.Input('Exchange Password') -AsPlainText -Force
+$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Exchange User'), $secpasswd)
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri $ctx.Input('Connection URI') -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -AllowClobber
+
+# Important parameters       
+$Email			= $ctx.Input('Email of member')
+$Group			= $ctx.Input('Distribution group name')       
+
+# Add member to an existing distribution groupe
+Remove-DistributionGroupMember -Identity $Group -Member $Email -Confirm:$false
+
+#Close Session
+$Session | Remove-PSSession
+}
+]]>
+  </script>
+  <connectors>
+    <connector name="Add new mailbox" description="Add new mailbox" guid="e94627d0-497f-4935-9fd9-12b9fe83829a">
+      <input>
+        <inputParameter name="Name" type="String" isArray="false" description="New Mailbox name, e.g. Max Mustermann" priority="1"/>
+        <inputParameter name="Email" type="String" isArray="false" description="New Email adress" priority="2"/>
+        <inputParameter name="Password" type="String" isArray="false" description="New Mailbox Password" priority="3"/>
+        <inputParameter name="Exchange User" type="String" isArray="false" description="Connection datas for exchange user 'user\domain'" priority="4"/>
+        <inputParameter name="Exchange Password" type="String" isArray="false" description="Connection password for exchange user" priority="5"/>
+        <inputParameter name="Connection URI" type="String" isArray="false" description="Connection uri for exchange server 'protocol://computername:Port/applicationname'" priority="6"/>
+        <inputParameter name="Database" type="String" isArray="false" description="Database of the new mailbox" priority="7"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Delete mailbox" description="Delete existing mailbox" guid="e94627d0-497f-4935-9fd9-12b9fe83111a">
+      <input>
+        <inputParameter name="Name" type="String" isArray="false" description="Mailbox name, e.g. Max Mustermann" priority="1"/>
+        <inputParameter name="Exchange User" type="String" isArray="false" description="Connection datas for exchange user 'user\domain'" priority="2"/>
+        <inputParameter name="Exchange Password" type="String" isArray="false" description="Connection password for exchange user" priority="3"/>
+        <inputParameter name="Connection URI" type="String" isArray="false" description="Connection uri for exchange server 'protocol://computername:Port/applicationname'" priority="4"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Add distribution mail group" description="Add new distribution mail group" guid="e94627d0-497f-4935-9fd9-12b9fe82222a">
+      <input>
+        <inputParameter name="Distribution group name" type="String" isArray="false" description="New Distribution group name, e.g. Support" priority="1"/>
+        <inputParameter name="Exchange User" type="String" isArray="false" description="Connection datas for exchange user 'user\domain'" priority="2"/>
+        <inputParameter name="Exchange Password" type="String" isArray="false" description="Connection password for exchange user" priority="3"/>
+        <inputParameter name="Connection URI" type="String" isArray="false" description="Connection uri for exchange server 'protocol://computername:Port/applicationname'" priority="4"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Delete distribution mail group" description="Delete distribution mail group" guid="e94627d0-497f-4935-9fd9-12b9fe20832a">
+      <input>
+        <inputParameter name="Distribution group name" type="String" isArray="false" description="Distribution group name, e.g. Support" priority="1"/>
+        <inputParameter name="Exchange User" type="String" isArray="false" description="Connection datas for exchange user 'user\domain'" priority="2"/>
+        <inputParameter name="Exchange Password" type="String" isArray="false" description="Connection password for exchange user" priority="3"/>
+        <inputParameter name="Connection URI" type="String" isArray="false" description="Connection uri for exchange server 'protocol://computername:Port/applicationname'" priority="4"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Add new member to distribution mail group" description="Add new member to an existing distribution mail group" guid="e94627d0-497f-4935-9fd9-12b9fe89999a">
+      <input>
+        <inputParameter name="Distribution group name" type="String" isArray="false" description="Distribution group name, e.g. Support" priority="1"/>
+        <inputParameter name="Email of member" type="String" isArray="false" description="Email adress of existing member" priority="2"/>
+        <inputParameter name="Exchange User" type="String" isArray="false" description="Connection datas for exchange user 'user\domain'" priority="3"/>
+        <inputParameter name="Exchange Password" type="String" isArray="false" description="Connection password for exchange user" priority="4"/>
+        <inputParameter name="Connection URI" type="String" isArray="false" description="Connection uri for exchange server 'protocol://computername:Port/applicationname'" priority="5"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Delete member from distribution mail group" description="Delete member from existing distribution group" guid="e94627d0-497f-4935-9fd9-12b9fe82342a">
+      <input>
+        <inputParameter name="Distribution group name" type="String" isArray="false" description="Distribution group name, e.g. Support" priority="1"/>
+        <inputParameter name="Email of member" type="String" isArray="false" description="Email adress of existing member" priority="2"/>
+        <inputParameter name="Exchange User" type="String" isArray="false" description="Connection datas for exchange user 'user\domain'" priority="3"/>
+        <inputParameter name="Exchange Password" type="String" isArray="false" description="Connection password for exchange user" priority="4"/>
+        <inputParameter name="Connection URI" type="String" isArray="false" description="Connection uri for exchange server 'protocol://computername:Port/applicationname'" priority="5"/>
+      </input>
+      <output/>
+    </connector>
+  </connectors>
+</connectorPackage>
