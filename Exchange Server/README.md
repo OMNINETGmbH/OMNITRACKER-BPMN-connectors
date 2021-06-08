@@ -2,7 +2,7 @@
 
 ## 1. Information about this connector package
 
-This connector package is valid for the third-party-system "Exchnage Server"
+This connector package is valid for the third-party-system "Exchange Server"
 PowerShell Version 5.1
 Exchange Server Module xxx
 
