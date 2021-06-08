@@ -1,0 +1,3 @@
+﻿<?xml version="1.0" encoding="utf-8"?><connectorPackage guid="{2a32c1ff-e6ff-42e4-9827-33d194113372}" category="Basic" language="VbScript"><script><![CDATA[If ConnectorName = "LogMessage" Then
+    LogMessage CStr(Input("text"))
+End If]]></script><connectors><connector name="LogMessage" description="Logs a message to the server log file" guid="e94627d0-497f-4935-9fd9-12b9fe83821f"><input><inputParameter name="text" type="String" isArray="false" /></input><output /></connector></connectors></connectorPackage>
