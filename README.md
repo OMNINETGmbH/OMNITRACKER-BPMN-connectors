@@ -18,6 +18,8 @@ We've devided our connector packages into different folders. Each folders stands
 1.2.2b If there is no existing connector package, create and add a new one
 *New connector packages*
 - Please add a new folder with the name of the third-party system 
+- Please add a new README.md file into the folder with the basic information about the connector package
+- Please add a new .otconn file (information about the format see 2.2); please note: you need to add new GuIDs within the connector package
 
 1.2.3 Start a pull request
 
