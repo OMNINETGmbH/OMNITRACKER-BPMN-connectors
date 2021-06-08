@@ -15,26 +15,31 @@ You can download and use those connectors with in OMNITRACKER installation.
 
 1.2.2a If there is one, use the updating possibility for this connector package
 *Update existing connector package*
-- Use the existing connector package and copy it; the name of the .otconn file is then "Name_ConsecutiveNumber.otconn"
-- Within the new file you can add new connectors to the connector package
-- also modify the README.md of this directory:
- - add the new version including a description of the changes
- - adapt the information about PowerShell and the used Module(s)  
+
 
 1.2.2b If there is no existing connector package, create and add a new one
 *New connector packages*
-- Please add a new folder with the name of the third-party system 
-- Please add a new README.md file into the folder with the basic information about the connector package
-- Please add a new .otconn file (information about the format see 2.2); please note: you need to add new GuIDs within the connector package
+**Please Note:** If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also tart from scratch to create the .otconn file. 
 
-1.2.3 Start a pull request
+
+1.2.3 Commit a pull request
 
 1.2.4 OMNINET will check the structure of the containing files within the pull request
 **Please note**: OMNINET will **not test** each connector; we will only check the syntax of the .otconn files which are pulled from users outside of OMNINET.
 
 ### 1.3 Check existing connector packages
+
 ### 1.4 Versioning an existing connector package
+- Use the existing connector package and copy it; the name of the .otconn file is then "Name_ConsecutiveNumber.otconn"
+- Within the new file you can add new connectors to the connector package
+- Also modify the README.md of this directory:
+  - Add the new version including a description of the changes
+  - Adapt the information about PowerShell and the used Module(s)  
+  - 
 ### 1.5 Creation of a new connector package
+- Add a new folder with the name of the third-party system 
+- Add a new README.md file into the folder with the basic information about the connector package
+- Add a new .otconn file (information about the format see 2.2); please note: you need to add new GuIDs within the connector package
 
 ## 2. OMNITRACKER BPMN
 With the OMNITRACKER BPMN Engine we are able to automate BPMN processes. Therefore, we can use a connector-based service task to automatically perform executed actions, usually in order to control external third-party systems. A "connector" is a script that is executed on the OMNITRACKER server computer. The script can be written either using VBScript or using PowerShell. A connector is packaged inside an XML file; each XML file can contain multiple connectors and data structure definitions. Aside from the script, a connector contains a list of data inputs and data outputs. The data inputs are filled from the BPMN process, and the data outputs are returned to the BPMN process.
