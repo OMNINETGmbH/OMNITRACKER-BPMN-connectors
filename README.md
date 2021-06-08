@@ -7,13 +7,19 @@ Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this pl
 
 ### 1.1 Structure of this repository
 
-We've devided our connector packages into different folders. Each folders stands for a third-party-tool. e.g. one folder with one connector package for MS Teams, etc. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
+We've devided our connector packages into different directories. Each directory stands for a third-party-tool. e.g. one folder with connector package(s) for MS Teams, etc. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
 
 ### 1.2 Rules for updated and new connector packages
 1.2.1 Check first, if there is already an existing connector package connecting to the third-party-system
+You can download and use those connectors with in OMNITRACKER installation. 
 
 1.2.2a If there is one, use the updating possibility for this connector package
 *Update existing connector package*
+- Use the existing connector package and copy it; the name of the .otconn file is then "Name_ConsecutiveNumber.otconn"
+- Within the new file you can add new connectors to the connector package
+- also modify the README.md of this directory:
+ - add the new version including a description of the changes
+ - adapt the information about PowerShell and the used Module(s)  
 
 1.2.2b If there is no existing connector package, create and add a new one
 *New connector packages*
