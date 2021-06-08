@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectorPackage guid="{2a32c1ff-e6ff-42e4-9827-33d194113377}" category="Sharepoint" language="PowerShell">
+  <script>
+    <![CDATA[
+if ($ctx.ConnectorName -eq 'Upload File')
+{
+# Important Parameters 
+$destination = $ctx.Input('Target path')
+$User = $ctx.Input('Sharepoint User')
+$File = get-childitem $ctx.Input('Local file path')
+$Password = $ctx.Input('Sharepoint User Password') 
+$securePasssword = ConvertTo-SecureString $Password -AsPlainText -Force 
+$credentials = New-Object System.Management.Automation.PSCredential ($User, $securePasssword)
+$webclient = New-Object System.Net.WebClient 
+$webclient.Credentials = $credentials
+
+# Upload the file  
+$webclient.UploadFile($destination + "/" + $File.Name, "PUT", $File.FullName)
+}
+if ($ctx.ConnectorName -eq 'Download File')
+{
+# Important Parameters 
+$Url = $ctx.Input('Target path')
+$Path = $ctx.Input('Local file path')
+$Username = $ctx.Input('Sharepoint User')
+$Password = ConvertTo-SecureString $ctx.Input('Sharepoint User Password') -AsPlainText -Force  
+$WebClient = New-Object System.Net.WebClient
+$WebClient.Credentials = New-Object System.Net.Networkcredential($Username, $Password)
+
+# Download the file  
+$WebClient.DownloadFile( $url, $path )
+}
+if ($ctx.ConnectorName -eq 'Modify file')
+{
+#Create PSSession
+$secpasswd = ConvertTo-SecureString $ctx.Input('Sharepoint User Password') -AsPlainText -Force
+$UserCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $ctx.Input('Sharepoint User'),$secpasswd
+$session = New-PSSession -computername $ctx.Input('Sharepoint Computername') -authentication credssp -Credential $UserCredential
+
+$1 = $ctx.Input('Sharepoint Path')
+$2 = $ctx.Input('Target Library')
+$3 = $ctx.Input('Filename')
+$4 = $ctx.Input('New Filename')
+$5 = $ctx.Input('New File title')
+ 
+$param = {
+param($1, $2, $3, $4, $5)
+Add-PsSnapin Microsoft.SharePoint.PowerShell;
+ 
+ 
+#Important Parameters
+$Web = Get-SPWeb $1
+$DocLib = $Web.Lists[$2]
+$filename = $3
+ 
+#Search file within library and update file properties
+foreach($ListItem in $DocLib.Items)
+{
+if($ListItem["Name"] -eq $filename)
+{
+if($ListItem.CheckOutStatus -ne "None" )
+{
+  $ListItem.File.CheckOut()
+  $ListItem["Name"] = $4
+  $ListItem["Title"] = $5
+  $ListItem.Update()
+  $ListItem.File.CheckIn("File Updated")
+}
+ELSE
+{
+  $ListItem["Name"] = $4
+  $ListItem["Title"] = $5
+  $ListItem.Update()
+  $ListItem.File.CheckIn("File Updated")
+}
+}
+}
+} 
+Invoke-Command -Session $session -ScriptBlock $param -ArgumentList ($1, $2, $3, $4, $5)
+
+#Quit Session
+Remove-PSSession $Session
+}
+if ($ctx.ConnectorName -eq 'Export file names')
+{
+#Create PSSession
+$secpasswd = ConvertTo-SecureString $ctx.Input('Sharepoint User Password') -AsPlainText -Force
+$UserCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $ctx.Input('Sharepoint User'),$secpasswd
+$session = New-PSSession -computername $ctx.Input('Sharepoint Computername') -authentication credssp -Credential $UserCredential
+
+$1 = $ctx.Input('Sharepoint Path')
+$2 = $ctx.Input('Target Library')
+$Path = $ctx.Input('Local Path')
+
+$param = {
+param($1, $2)
+Add-PsSnapin Microsoft.SharePoint.PowerShell
+
+#Get the Web
+$web = Get-SPWeb -identity $1
+ 
+#Get the Target List
+$list = $web.Lists[$2]
+ 
+#Array to Hold Result - PSObjects
+$ListItemCollection = @()
+ 
+#Get All List items
+$list.Items | foreach {
+$ExportItem = New-Object PSObject 
+$ExportItem | Add-Member -MemberType NoteProperty -name "Name" -value $_["Name"]
+$ExportItem | Add-Member -MemberType NoteProperty -Name "Created" -value $_["Created"]
+ 
+#Add the object with property to an Array
+$ListItemCollection += $ExportItem
+}
+#Export the result Array to CSV file
+$result = $ListItemCollection                     
+ 
+#Dispose the web Object
+$web.Dispose()
+
+return $result
+}
+Invoke-Command -Session $session -ScriptBlock $param -ArgumentList ($1, $2) | select Name, Created | Export-CSV $Path -NoTypeInformation 
+
+#Quit Session
+Remove-PSSession $Session
+}
+if ($ctx.ConnectorName -eq 'Delete file')
+{
+#Create PSSession
+$secpasswd = ConvertTo-SecureString $ctx.Input('Sharepoint User Password') -AsPlainText -Force
+$UserCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $ctx.Input('Sharepoint User'),$secpasswd
+$session = New-PSSession -computername $ctx.Input('Sharepoint Computername') -authentication credssp -Credential $UserCredential
+
+$1 = $ctx.Input('Sharepoint Path')
+$2 = $ctx.Input('Target Library')
+$3 = $ctx.Input('Filename')
+
+
+$param = {
+param($1, $2, $3)
+Add-PsSnapin Microsoft.SharePoint.PowerShell
+
+# Important Parameters
+$targetWeb = $1
+$targetLibrary = $2
+$fileName = $3
+$myWeb = Get-SPWeb $targetWeb
+$myLib = $myWeb.GetFolder($targetLibrary)
+
+# Search and delete file
+$myFile = $myLib.Files | ? {$_.name -eq $fileName}
+$myFile.CheckOut()
+$myFile.Delete()
+$myFile.Update()
+
+}
+Invoke-Command -Session $session -ScriptBlock $param -ArgumentList ($1, $2, $3)
+
+#Quit Session
+Remove-PSSession $Session
+}
+]]>
+  </script>
+  <connectors>
+    <connector name="Upload File" description="Upload file to sharepoint server" guid="e94627d0-497f-4935-9fd9-12b9fe83828b">
+      <input>
+        <inputParameter name="Sharepoint User" type="String" isArray="false" description="Sharepoint User" priority="1"/>
+        <inputParameter name="Sharepoint User Password" type="String" isArray="false" description="Sharepoint User password" priority="2"/>
+        <inputParameter name="Target Path" type="String" isArray="false" description="Sharepoint Path" priority="3"/>
+        <inputParameter name="Local file path" type="String" isArray="false" description="Local path to file" priority="4"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Download File" description="Download file from sharepoint server" guid="e94627d0-497f-4935-9fd9-12b9fe83799b">
+      <input>
+        <inputParameter name="Sharepoint User" type="String" isArray="false" description="Sharepoint User" priority="1"/>
+        <inputParameter name="Sharepoint User Password" type="String" isArray="false" description="Sharepoint User password" priority="2"/>
+        <inputParameter name="Target Path" type="String" isArray="false" description="Sharepoint Path" priority="3"/>
+        <inputParameter name="Local file path" type="String" isArray="false" description="Local path to file" priority="4"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Modify file" description="Modify file contained in sharepoint document library " guid="e94627d0-497f-4935-9fd9-12b9fe87655b">
+      <input>
+        <inputParameter name="Sharepoint Computername" type="String" isArray="false" description="Sharepoint computername" priority="1"/>
+        <inputParameter name="Sharepoint User" type="String" isArray="false" description="Sharepoint User" priority="3"/>
+        <inputParameter name="Sharepoint User Password" type="String" isArray="false" description="Sharepoint User password" priority="4"/>
+	<inputParameter name="Sharepoint Path" type="String" isArray="false" description="Sharepoint Path" priority="5"/>
+        <inputParameter name="Target Library" type="String" isArray="false" description="Sharepoint Document library name" priority="6"/>
+        <inputParameter name="Filename" type="String" isArray="false" description="Sharepoint Document file name" priority="7"/>
+        <inputParameter name="New Filename" type="String" isArray="false" description="New File name" priority="8"/>
+        <inputParameter name="New File title" type="String" isArray="false" description="New File title" priority="9"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Delete file" description="Delete file contained in sharepoint document library" guid="e94627d0-497f-4935-9fd9-12b9fe84444b">
+      <input>
+        <inputParameter name="Sharepoint Computername" type="String" isArray="false" description="Sharepoint computername" priority="1"/>
+        <inputParameter name="Sharepoint User" type="String" isArray="false" description="Sharepoint User" priority="2"/>
+        <inputParameter name="Sharepoint User Password" type="String" isArray="false" description="Sharepoint User password" priority="3"/>
+        <inputParameter name="Sharepoint Path" type="String" isArray="false" description="Sharepoint Path" priority="4"/>
+        <inputParameter name="Target Library" type="String" isArray="false" description="Sharepoint Library" priority="5"/>
+        <inputParameter name="Filename" type="String" isArray="false" description="Sharepoint Filename" priority="6"/>
+      </input>
+      <output/>
+    </connector>
+    <connector name="Export file names" description="List output of files contained in sharepoint document library" guid="e94627d0-497f-4935-9fd9-12b9fe85555b">
+      <input>
+        <inputParameter name="Sharepoint Computername" type="String" isArray="false" description="Sharepoint computername" priority="1"/>
+        <inputParameter name="Sharepoint User" type="String" isArray="false" description="Sharepoint User" priority="2"/>
+        <inputParameter name="Sharepoint User Password" type="String" isArray="false" description="Sharepoint User password" priority="3"/>
+        <inputParameter name="Sharepoint Path" type="String" isArray="false" description="Sharepoint Path" priority="4"/>
+        <inputParameter name="Target Library" type="String" isArray="false" description="Sharepoint Library" priority="5"/>
+        <inputParameter name="Local Path" type="String" isArray="false" description="Local Path for .csv Export" priority="6"/>
+      </input>
+      <output/>
+    </connector>
+  </connectors>
+</connectorPackage>
