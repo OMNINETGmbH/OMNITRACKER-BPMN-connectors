@@ -7,24 +7,26 @@ Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this pl
 
 ### 1.1 Structure of this repository
 
-We've devided our connector packages into different directories. Each directory stands for a third-party-tool. e.g. one folder with connector package(s) for MS Teams, etc. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
+We've devided our connector packages into different **directories**. Each directory stands for a third-party-tool. e.g. one folder with connector package(s) for MS Teams, etc. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
+
+We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download to create new .otconn files.
 
 ### 1.2 Rules for updated and new connector packages
 1.2.1 Check first, if there is already an existing connector package connecting to the third-party-system
 You can download and use those connectors with in OMNITRACKER installation. 
 
 1.2.2a If there is one, use the updating possibility for this connector package
-*Update existing connector package*
 
+*Update existing connector package* - **Please Note:** If you want to update an existing connector package, please copy the exiting -otconn file and a add a new one to the directory. In addition, we want you to update the README-md file of the directory with the new information about the adapted connecotr package.
 
 1.2.2b If there is no existing connector package, create and add a new one
-*New connector packages*
-**Please Note:** If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also tart from scratch to create the .otconn file. 
 
+*New connector package* - **Please Note:** If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also tart from scratch to create the .otconn file. 
 
 1.2.3 Commit a pull request
 
 1.2.4 OMNINET will check the structure of the containing files within the pull request
+
 **Please note**: OMNINET will **not test** each connector; we will only check the syntax of the .otconn files which are pulled from users outside of OMNINET.
 
 ### 1.3 Check existing connector packages
@@ -33,9 +35,9 @@ You can download and use those connectors with in OMNITRACKER installation.
 - Use the existing connector package and copy it; the name of the .otconn file is then "Name_ConsecutiveNumber.otconn"
 - Within the new file you can add new connectors to the connector package
 - Also modify the README.md of this directory:
-  - Add the new version including a description of the changes
-  - Adapt the information about PowerShell and the used Module(s)  
-  - 
+    - Adapt the information about PowerShell and the used Module(s)  
+    - Add the new version including a description of the changes
+
 ### 1.5 Creation of a new connector package
 - Add a new folder with the name of the third-party system 
 - Add a new README.md file into the folder with the basic information about the connector package
