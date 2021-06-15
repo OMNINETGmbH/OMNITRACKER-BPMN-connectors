@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectorPackage guid="{8f9f7351-4d6b-428e-84e2-7efd401d0608}" category="Super Admin Features" language="PowerShell">
+    <script>
+
+    <![CDATA[
+    ########################################################################################################
+    ###################     Generate Connector Template File
+    ########################################################################################################
+    ##
+    if ($ctx.ConnectorName -eq 'Generate Connector Template') {
+        # Capturing Input Parameters
+        $ConnectorPackageName = $ctx.Input('ConnectorPackageName')
+		$ConnectorName = $ctx.Input('ConnectorName')
+		$Path = $ctx.Input('Path')
+        $WithErrorHandling = $ctx.Input('WithErrorHandling')
+        $StructureOfVariables = $ctx.Input('strucConnectorVariables')
+
+        # Lining up the need variables and start-strings to manipulate later
+        #$SaveLocation = "C:\"
+        $FileName = "$($ConnectorPackageName).otconn"
+        $FullPath = Join-Path -Path $Path -ChildPath $($FileName)
+        if (-Not(Test-Path -Path $FullPath)) {New-Item -Path $FullPath -Force}
+
+
+        $dttime = Get-Date -Format yyyyMMddHHmmss
+        $HasError = $false
+        $ErrorMessage = ""
+
+        $Priority = 1
+        $ConnectorContent = "<?xml version=`"1.0`" encoding=`"utf-8`"?>"
+        $ConnectorOutputs = ""
+        $ConnectorFooterInputs = "<input>
+        "
+        $ConnectorFooterOutputs = "<output>
+        "
+
+
+        # Starting to generate the Strings
+        Try {
+            $NewGuid = [Guid]::NewGuid()
+            $ConnectorHeader = "<connectorPackage guid=`"{$($NewGuid)}`" category=`"$($ConnectorPackageName)`" language=`"PowerShell`">
+                <script>
+                <![CDATA["
+            
+            $ConnectorContent += $ConnectorHeader
+            $ConnectorContent += "
+            ###################     $($ConnectorName)
+            ###################     Generated via the Omnitracker Connector Template Generator
+            ###################     Creation timestamp: $($dttime)
+            if (`$ctx.ConnectorName -eq '$($ConnectorName)') {
+                # Capturing Parameters
+                "
+            if ($WithErrorHandling){
+                $ConnectorContent += "`$HasError = `$false
+                `$ErrorMessage = `"`"
+                "
+
+                $ConnectorOutputs = "`$ctx.Output('HasError') = `$HasError
+                `$ctx.Output('ErrorMessage') = `$ErrorMessage
+                "
+                $ConnectorFooterOutputs += "<outputParameter name=`"HasError`" type=`"Boolean`" isArray=`"False`" description=`"HasError boolean`"/>
+                <outputParameter name=`"ErrorMessage`" type=`"String`" isArray=`"False`" description=`"Optional error message`"/>
+                "
+            }
+            
+            $NewGuid = [Guid]::NewGuid()
+            $ConnectorFooter = "
+            }
+            $([char]93)$([char]93)$([char]62)
+            </script>
+            <connectors>
+            <connector name=`"$($ConnectorName)`" description=`"$($ConnectorName)`" guid=`"$($NewGuid)`">
+                "
+            
+            foreach($Variable in $StructureOfVariables){
+                if ($Variable.bolInputparameter) {
+                    $ConnectorContent += "`$$($Variable.strName) = `$ctx.Input('$($Variable.strName)')
+                    "
+
+                    $ConnectorFooterInputs += "<inputParameter name=`"$($Variable.strName)`" type=`"$($Variable.strVariableType)`" isArray=`"$($Variable.bolArray)`" description=`"$($Variable.strName)`" priority=`"$($Priority)`"/>
+                    "
+                    $Priority++
+                }
+                else {
+                    $ConnectorOutputs += "`$$($Variable.strName) = `$ctx.Output('$($Variable.strName)')
+                    "
+
+                    $ConnectorFooterOutputs += "<outputParameter name=`"$($Variable.strName)`" type=`"$($Variable.strVariableType)`" isArray=`"$($Variable.bolArray)`" description=`"$($Variable.strName)`"/>
+                    "
+                }
+            }
+
+            if (-Not($ConnectorFooterInputs -eq "<input>")) {
+                $ConnectorFooterInputs += "</input>
+                "
+            }
+            else {
+                $ConnectorFooterInputs = ""
+            }
+
+            if (-Not($ConnectorFooterOutputs -eq "<output>")) {
+                $ConnectorFooterOutputs += "</output>
+                "
+            }
+            else {
+                $ConnectorFooterOutputs = ""
+            }
+
+            if ($WithErrorHandling) {
+                $ConnectorContent += @'
+                Try {
+                    # Insert individual script here
+                }
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+                }
+
+'@
+            }
+            else {
+                $ConnectorContent += "
+                # Insert individual script here
+                
+                "
+            }
+
+            # Combining all Strings together
+            $ConnectorContent += $ConnectorOutputs + $ConnectorFooter + $ConnectorFooterInputs + $ConnectorFooterOutputs
+            $ConnectorContent += "</connector>
+            </connectors>
+            </connectorPackage>"
+
+            Set-Content -Path $FullPath -Value $ConnectorContent -Force
+        }
+        Catch {
+            $HasError = $TRUE
+            $ErrorMessage = "Something went wrong while generating the new Connector.`r`n`r`n Following error occured: $($_.Exception.Message)"
+        }
+
+        $ctx.Output('HasError') = $HasError
+        $ctx.Output('ErrorMessage') = $ErrorMessage
+    }
+
+    ]]>
+    </script>
+    <structures>
+        <structure name="strucConnectorVariables">
+            <members>
+                <member name="strName" isArray="false" type="String" />
+                <member name="bolInputparameter" isArray="false" type="Boolean" />
+                <member name="strVariableType" isArray="false" type="String" />
+                <member name="bolArray" isArray="false" type="Boolean" />
+            </members>
+        </structure>
+    </structures>
+    <connectors>
+        <connector name="Generate Connector Template" description="Generate Connector Template" guid="7dea8685-1a03-478a-b500-089722f0f927">
+            <input>
+                <inputParameter name="ConnectorPackageName" type="String" isArray="false" description="ConnectorPackageName (mandatory)" priority="1"/>
+                <inputParameter name="ConnectorName" type="String" isArray="false" description="ConnectorName" priority="2"/>
+				<inputParameter name="Path" type="String" isArray="false" description="Path" priority="3"/>
+				<inputParameter name="WithErrorHandling" type="Boolean" isArray="false" description="WithErrorHandling" priority="4"/>
+                <inputParameter name="strucConnectorVariables" type="strucConnectorVariables" isArray="true" description="strucConnectorVariables (mandatory)" priority="5"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+            </output>
+        </connector>
+    </connectors>
+</connectorPackage>
