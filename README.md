@@ -18,13 +18,15 @@ Within the directory **otconn template generator** you can find a connector pack
 
 You can download and use those connectors with in OMNITRACKER installation. 
 
+
 1.2.2a *If there is one, use the updating possibility for this connector package (Update existing connector package)* 
 
 If you want to update an existing connector package, please replace the existing .otconn file. In addition, we want you to update the README-md file of the directory with the new information about the adapted connector package (see 1.4 for detailled description and rules).
 
 1.2.2b *If there is no existing connector package, create and add a new one (New connector package)* 
 
-If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules). 
+If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules).
+
 
 1.2.3 *Commit a pull request*
 
@@ -34,11 +36,14 @@ If you want you can use the Sceleton folder and / or the *Template Generator BPM
 
 OMNINET will **not automatically test** each connector; we will only check the syntax of the .otconn files and README.md which are pulled from users outside of OMNINET.
 
+
 ### 1.3 Check existing connector packages
 - Check the existing connector packages with the different directories.
 - Each directory contains one .otconn file with multiple connectors within it. 
 - You will also find a README.md within each folder with detailled information about the connector package.
 - Within the issues you can start or enter a discussion about a connector (package).
+
+
 
 ### 1.4 Rules for versioning an existing connector package
 - Use the existing connector package and copy it; the name of the .otconn file is then "Name_ConsecutiveNumber.otconn"
@@ -49,6 +54,8 @@ OMNINET will **not automatically test** each connector; we will only check the s
        - include a short description of the changes you made to each connector
        - add new connectors if necessary
 
+
+
 ### 1.5 Rules for adding a new connector package
 - Add a new folder with the name of the third-party system 
 - Add a new README.md file into the folder with the basic information about the connector package
@@ -58,6 +65,8 @@ OMNINET will **not automatically test** each connector; we will only check the s
     - Version: Count +1 
     - Connectors of the coneector package: add each connecotr with a short description
 - Add a new .otconn file (information about the format see 2.2); please note: you need to add new GuIDs within the connector package
+
+
 
 ## 2. OMNITRACKER BPMN
 With the OMNITRACKER BPMN Engine we are able to automate BPMN processes. Therefore, we can use a connector-based service task to automatically perform executed actions, usually in order to control external third-party systems. A "connector" is a script that is executed on the OMNITRACKER server computer. The script can be written either using VBScript or using PowerShell. A connector is packaged inside an XML file; each XML file can contain multiple connectors and data structure definitions. Aside from the script, a connector contains a list of data inputs and data outputs. The data inputs are filled from the BPMN process, and the data outputs are returned to the BPMN process.
