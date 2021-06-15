@@ -11,7 +11,7 @@ We've devided our connector packages into different **directories**. Each direct
 
 We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download to create new .otconn files.
 
-### 1.2 Rules for updated and new connector packages
+### 1.2 Procedure for versioning existing or adding new connector packages
 1.2.1 Check first, if there is already an existing connector package connecting to the third-party-system
 You can download and use those connectors with in OMNITRACKER installation. 
 
@@ -33,8 +33,9 @@ You can download and use those connectors with in OMNITRACKER installation.
 - Check the existing connecotr packages with the different directories.
 - Each directory contains one .otconn file with multiple connectors within it. 
 - You will also find a REDME.md within each folder with detailled information about the connector package.
+- Within the issues you can start or enter a discussion about a connector (package).
 
-### 1.4 Versioning an existing connector package
+### 1.4 Rules for versioning an existing connector package
 - Use the existing connector package and copy it; the name of the .otconn file is then "Name_ConsecutiveNumber.otconn"
 - Within the new file you can add new connectors to the connector package
 - Also modify the README.md of this directory:
@@ -43,7 +44,7 @@ You can download and use those connectors with in OMNITRACKER installation.
       -include a short description of the changes you made to each connector
       -add new connectors if necessary
 
-### 1.5 Creation of a new connector package
+### 1.5 Rules for adding a new connector package
 - Add a new folder with the name of the third-party system 
 - Add a new README.md file into the folder with the basic information about the connector package
     - PowerShell Module
