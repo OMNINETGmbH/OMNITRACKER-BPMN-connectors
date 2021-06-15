@@ -17,11 +17,11 @@ You can download and use those connectors with in OMNITRACKER installation.
 
 1.2.2a If there is one, use the updating possibility for this connector package
 
-*Update existing connector package* - **Please Note:** If you want to update an existing connector package, please replace the existing .otconn file. In addition, we want you to update the README-md file of the directory with the new information about the adapted connector package (see 1.4 for detailled description).
+*Update existing connector package* - **Please Note:** If you want to update an existing connector package, please replace the existing .otconn file. In addition, we want you to update the README-md file of the directory with the new information about the adapted connector package (see 1.4 for detailled description and rules).
 
 1.2.2b If there is no existing connector package, create and add a new one
 
-*New connector package* - **Please Note:** If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description). 
+*New connector package* - **Please Note:** If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules). 
 
 1.2.3 Commit a pull request
 
