@@ -11,6 +11,8 @@ We've devided our connector packages into different **directories**. Each direct
 
 We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download to create new .otconn files.
 
+Within the directory **otconn template generator** you can find a connector package and also a .bpmn file which you can use to create new .otconn files. The bpmn files contains a BPMN diagram, which allows you to configure a connector package. You can find a detailled description within the README.md within the directory.
+
 ### 1.2 Procedure for versioning existing or adding new connector packages
 1.2.1 Check first, if there is already an existing connector package connecting to the third-party-system
 You can download and use those connectors with in OMNITRACKER installation. 
