@@ -46,11 +46,11 @@ You can download and use those connectors with in OMNITRACKER installation.
 ### 1.5 Creation of a new connector package
 - Add a new folder with the name of the third-party system 
 - Add a new README.md file into the folder with the basic information about the connector package
- - PowerShell Module
- - Valid from
- - PowerShell Version
- - Version: Count +1 
- - Connectors of the coneector package: add each connecotr with a short description
+    - PowerShell Module
+    - Valid from
+    - PowerShell Version
+    - Version: Count +1 
+    - Connectors of the coneector package: add each connecotr with a short description
 - Add a new .otconn file (information about the format see 2.2); please note: you need to add new GuIDs within the connector package
 
 ## 2. OMNITRACKER BPMN
