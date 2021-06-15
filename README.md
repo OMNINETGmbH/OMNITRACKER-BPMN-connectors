@@ -1,6 +1,6 @@
 # OMNITRACKER BPMN connectors
 
-Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this platform you will have the ability to view, add and also discuss about connectors between OMNITRACKER and third-party systems. 
+Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this platform you will have the possibility to view, add and also discuss about connectors between OMNITRACKER and third-party systems. 
 
  
 ## 1. How to participate
@@ -14,27 +14,30 @@ We've also added one directory called **sceleton**. This contains an empty conne
 Within the directory **otconn template generator** you can find a connector package and also a .bpmn file which you can use to create new .otconn files. The bpmn files contains a BPMN diagram, which allows you to configure a connector package. You can find a detailled description within the README.md within the directory.
 
 ### 1.2 Procedure for versioning existing or adding new connector packages
-1.2.1 Check first, if there is already an existing connector package connecting to the third-party-system
+1.2.1 *Check first, if there is already an existing connector package connecting to the third-party-system*
+
 You can download and use those connectors with in OMNITRACKER installation. 
 
-1.2.2a If there is one, use the updating possibility for this connector package
+1.2.2a *If there is one, use the updating possibility for this connector package (Update existing connector package)* 
 
-*Update existing connector package* - **Please Note:** If you want to update an existing connector package, please replace the existing .otconn file. In addition, we want you to update the README-md file of the directory with the new information about the adapted connector package (see 1.4 for detailled description and rules).
+If you want to update an existing connector package, please replace the existing .otconn file. In addition, we want you to update the README-md file of the directory with the new information about the adapted connector package (see 1.4 for detailled description and rules).
 
-1.2.2b If there is no existing connector package, create and add a new one
+1.2.2b *If there is no existing connector package, create and add a new one (New connector package)* 
 
-*New connector package* - **Please Note:** If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules). 
+If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules). 
 
-1.2.3 Commit a pull request
+1.2.3 *Commit a pull request*
 
-1.2.4 OMNINET will check the structure of the containing files within the pull request
 
-**Please note**: OMNINET will **not automatically test** each connector; we will only check the syntax of the .otconn files and README.md which are pulled from users outside of OMNINET.
+
+1.2.4 *OMNINET will check the structure of the containing files within the pull request*
+
+OMNINET will **not automatically test** each connector; we will only check the syntax of the .otconn files and README.md which are pulled from users outside of OMNINET.
 
 ### 1.3 Check existing connector packages
-- Check the existing connecotr packages with the different directories.
+- Check the existing connector packages with the different directories.
 - Each directory contains one .otconn file with multiple connectors within it. 
-- You will also find a REDME.md within each folder with detailled information about the connector package.
+- You will also find a README.md within each folder with detailled information about the connector package.
 - Within the issues you can start or enter a discussion about a connector (package).
 
 ### 1.4 Rules for versioning an existing connector package
@@ -43,8 +46,8 @@ You can download and use those connectors with in OMNITRACKER installation.
 - Also modify the README.md of this directory:
     - Adapt the information about PowerShell, the used Module(s), valid from, version 
     - Adapt the connectors of the connector package:
-      -include a short description of the changes you made to each connector
-      -add new connectors if necessary
+       - include a short description of the changes you made to each connector
+       - add new connectors if necessary
 
 ### 1.5 Rules for adding a new connector package
 - Add a new folder with the name of the third-party system 
