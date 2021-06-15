@@ -18,6 +18,7 @@ This connector package will create a new .otconn file.
 2.3 Template_Gerenator.bpmn
 - This .bpmn file contains the following elements:
 	- BPMN Diagram
+	![grafik](https://user-images.githubusercontent.com/85875885/122013304-57799c00-cdbe-11eb-9245-98b70229e556.png)
 	- BPMN catalogue group + entry
 	- BPMN category
 	- BPMN structure
