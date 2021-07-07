@@ -12,7 +12,7 @@ This connector package is valid for the third-party-system "Active Directory"
 
 
 - PowerShell Version 5.1
-- Active Directory Module xxx
+- Active Directory Module
 - Version 1: Initial version of OMNINET
 
 - Connectors of the connector package:
