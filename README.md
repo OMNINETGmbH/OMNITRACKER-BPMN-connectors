@@ -30,7 +30,7 @@ If you want you can use the Sceleton folder and / or the *Template Generator BPM
 
 1.2.3 *Commit a pull request*
 
-
+You can commit a pull request to add new connector packages or update an existing package. Please note 1.4 and 1.5 for the rules.
 
 1.2.4 *OMNINET will check the structure of the containing files within the pull request*
 
