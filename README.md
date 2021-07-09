@@ -63,7 +63,7 @@ OMNINET will **not automatically test** each connector; we will only check the s
     - Valid from
     - PowerShell Version
     - Version: Count +1 
-    - Connectors of the coneector package: add each connecotr with a short description
+    - Connectors of the coneector package: add each connector with a short description
 - Add a new .otconn file (information about the format see 2.2); please note: you need to add new GuIDs within the connector package
 
 
