@@ -7,25 +7,25 @@ Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this pl
 
 ### 1.1 Structure of this repository
 
-We've devided our connector packages into different **directories**. Each directory stands for a third-party-tool. e.g. one folder with connector package(s) for MS Teams, etc. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
+We've devided our connector packages into different **directories**. Each directory stands for a third-party-tool. e.g. one directory with a connector package for MS Teams. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
 
-We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download to create new .otconn files.
+We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download and reuse to create new directories.
 
-Within the directory **otconn template generator** you can find a connector package and also a .bpmn file which you can use to create new .otconn files. The bpmn files contains a BPMN diagram, which allows you to configure a connector package. You can find a detailled description within the README.md within the directory.
+Within the directory **otconn template generator** you can find a connector package and also a .bpmn file which you can use to configure new .otconn files. The bpmn file contains a BPMN diagram, which allows you to configure a connector package. You can find a detailled description within the README.md within the directory.
 
-### 1.2 Procedure for versioning existing or adding new connector packages
+### 1.2 Procedure for versioning an existing or adding a new connector packages
 1.2.1 *Check first, if there is already an existing connector package connecting to the third-party-system*
 
-You can download and use those connectors with in OMNITRACKER installation. 
+You can download and use those connectors within your OMNITRACKER installation. 
 
 
 1.2.2a *If there is one, use the updating possibility for this connector package (Update existing connector package)* 
 
-If you want to update an existing connector package, please replace the existing .otconn file. In addition, we want you to update the README-md file of the directory with the new information about the adapted connector package (see 1.4 for detailled description and rules).
+If you want to update an existing connector package, please replace the existing .otconn file. In addition, we want you to update the README.md file of the directory with the new information about the adapted connector package (see 1.4 for detailled description and rules).
 
 1.2.2b *If there is no existing connector package, create and add a new one (New connector package)* 
 
-If you want you can use the Sceleton folder and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) including the connector of additional features to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules).
+If you want you can use the sceleton directory and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules).
 
 
 1.2.3 *Commit a pull request*
