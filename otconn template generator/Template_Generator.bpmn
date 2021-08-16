@@ -1,8 +1,144 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <sem:definitions expressionLanguage="http://www.omninet.de/bpmn/expressions/v1" typeLanguage="http://www.omninet.de/bpmn/types/v1" targetNamespace="http://www.omninet.de/bpmn/definitions/v1" xmlns:sem="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:ot="http://www.omninet.de/ot/bpmn/v1">
-	<sem:itemDefinition id="_array4" ot:simpleType="_73" ot:isArray="true"/>
-	<sem:itemDefinition id="_array3" ot:simpleType="_1" ot:isArray="true"/>
-	<sem:itemDefinition id="_1" ot:alias="strucConnectorVariables">
+	<sem:itemDefinition id="_array2" ot:simpleType="_91" ot:isArray="true"/>
+	<sem:itemDefinition id="_array1" ot:simpleType="_34" ot:isArray="true"/>
+	<sem:itemDefinition id="_OT_DICTIONARIES_">
+		<sem:extensionElements>
+			<ot:dictionary id="_1" name="Dict" alias="Dict">
+				<ot:schemaObjectDescription>
+					<ot:translatedText lang="de"/>
+				</ot:schemaObjectDescription>
+				<ot:entry id="_2" name="Entry_ConnectorTemplateGenerator">
+					<ot:translation lang="de" text="Erstellung eines Konnektorpaket-Template"/>
+					<ot:translation lang="en" text="Connector Template Generator"/>
+				</ot:entry>
+				<ot:entry id="_3" name="Entry_GenerateConnectorPackage">
+					<ot:translation lang="de" text="Konnektorpaket erstellen"/>
+					<ot:translation lang="en" text="Generate Connector"/>
+				</ot:entry>
+				<ot:entry id="_4" name="Entry_TransferIntoStructureArray">
+					<ot:translation lang="de" text="Struktur der Variablen erzeugen"/>
+					<ot:translation lang="en" text="Transfer into structure array"/>
+				</ot:entry>
+				<ot:entry id="_5" name="Entry_LoopUntilAllVariablesAreCaptured">
+					<ot:translation lang="de" text="Schleife, bis alle Variablen erfasst wurden"/>
+					<ot:translation lang="en" text="Loop until all variables are captured"/>
+				</ot:entry>
+				<ot:entry id="_6" name="Entry_DefineVariables">
+					<ot:translation lang="de" text="Variablen definieren"/>
+					<ot:translation lang="en" text="Define Variable(s)"/>
+				</ot:entry>
+				<ot:entry id="_7" name="Entry_ErrorInInputs">
+					<ot:translation lang="de" text="Fehler bei Eingabe"/>
+					<ot:translation lang="en" text="Error in inputs"/>
+				</ot:entry>
+				<ot:entry id="_8" name="Entry_InputConnectorParameters">
+					<ot:translation lang="de" text="Konnektorpaket definieren"/>
+					<ot:translation lang="en" text="Input connector package"/>
+				</ot:entry>
+				<ot:entry id="_9" name="Entry_FirstDefineImportantParameters">
+					<ot:translation lang="de" text="Bitte definieren Sie die wichtigsten Parameter für Ihr neues Konnektorpaket"/>
+					<ot:translation lang="en" text="Please define important parameters for the connector package"/>
+				</ot:entry>
+				<ot:entry id="_10" name="Entry_AmountOfParameters">
+					<ot:translation lang="de" text="Anzahl der Parameter muss 0 (Null) oder höher sein"/>
+					<ot:translation lang="en" text="Amount of parameters must be 0 (zero) or higher"/>
+				</ot:entry>
+				<ot:entry id="_11" name="Entry_NewConnectorPackageName">
+					<ot:translation lang="de" text="Neuer Konnektorpaket-Name"/>
+					<ot:translation lang="en" text="New connector package name"/>
+				</ot:entry>
+				<ot:entry id="_12" name="Entry_NewConnectorName">
+					<ot:translation lang="de" text="Neuer Konnektor-Name"/>
+					<ot:translation lang="en" text="New connector name"/>
+				</ot:entry>
+				<ot:entry id="_13" name="Entry_AmountInputVariables">
+					<ot:translation lang="de" text="Anzahl Input Variablen"/>
+					<ot:translation lang="en" text="Amount input variables"/>
+				</ot:entry>
+				<ot:entry id="_14" name="Entry_DefineAmountInputVariables">
+					<ot:translation lang="de" text="Definieren Sie die Anzahl der Input Parameter (&gt;0)"/>
+					<ot:translation lang="en" text="Define the amount of input parameters of your new connector"/>
+				</ot:entry>
+				<ot:entry id="_15" name="Entry_AmountOutputVariables">
+					<ot:translation lang="de" text="Anzahl Output Variablen"/>
+					<ot:translation lang="en" text="Amount output variables"/>
+				</ot:entry>
+				<ot:entry id="_16" name="Entry_DefineAmountOutputParameters">
+					<ot:translation lang="de" text="Definieren Sie die Anzahl der Output Parameter (&gt;0)"/>
+					<ot:translation lang="en" text="Define the amount of output parameters of your new connector"/>
+				</ot:entry>
+				<ot:entry id="_17" name="Entry_Path">
+					<ot:translation lang="de" text="Speicherpfad"/>
+					<ot:translation lang="en" text="Path"/>
+				</ot:entry>
+				<ot:entry id="_18" name="Entry_PleaseDecideIncludeErrorHandling">
+					<ot:translation lang="de" text="Bitte entscheiden Sie, ob Sie im Konnektorskript (PowerShell) eine Fehlerbehandlung einfügen lassen möchten"/>
+					<ot:translation lang="en" text="Please decide if you want to include error handling"/>
+				</ot:entry>
+				<ot:entry id="_19" name="Entry_ErrorHandling">
+					<ot:translation lang="de" text="Fehlerbehandlung einfügen?"/>
+					<ot:translation lang="en" text="Error handling"/>
+				</ot:entry>
+				<ot:entry id="_20" name="Entry_PleaseEnterOnlyNumericsAmountFields">
+					<ot:translation lang="de" text="Bitte verwenden Sie nur Zahlen für die Anzahl der Input und Output Parameter"/>
+					<ot:translation lang="en" text="Please enter only numerics into the amount fields"/>
+				</ot:entry>
+				<ot:entry id="_21" name="Entry_FixErrors">
+					<ot:translation lang="de" text="Bitte behenden Sie die folgenden Fehler"/>
+					<ot:translation lang="en" text="Please fix the following error(s)"/>
+				</ot:entry>
+				<ot:entry id="_22" name="Entry_SelectInputParameters">
+					<ot:translation lang="de" text="Bitte geben Sie die wichtigsten Parameter für Ihr neues Konnektorpaket ein"/>
+					<ot:translation lang="en" text="Please select the input parameters of your new connector package"/>
+				</ot:entry>
+				<ot:entry id="_23" name="Entry_PleaseDefineVariables">
+					<ot:translation lang="de" text="Bitte spezifizieren Sie die einzelnen Variablen"/>
+					<ot:translation lang="en" text="Please define the variables"/>
+				</ot:entry>
+				<ot:entry id="_24" name="Entry_InsertInput">
+					<ot:translation lang="de" text="Bitte ergänzen Sie die Informationen für Inputvariable"/>
+					<ot:translation lang="en" text="Please insert information for input variable"/>
+				</ot:entry>
+				<ot:entry id="_25" name="Entry_InsertOutput">
+					<ot:translation lang="de" text="Bitte ergänzen Sie die Informationen für Outputvariable"/>
+					<ot:translation lang="en" text="Please insert information for output variable"/>
+				</ot:entry>
+				<ot:entry id="_26" name="Entry_SupportedVariabletypes">
+					<ot:translation lang="de" text="Hinweis: Folgende Variablentypen können Sie verwenden (Groß-/Kleinschreibung beachten): Boolean, Byte, DateTime, Double, LongInt, ShortInt, Single, String"/>
+					<ot:translation lang="en" text="Please note: Supported variabletypes (case sensitive): Boolean, Byte, DateTime, Double, LongInt, ShortInt, Single, String"/>
+				</ot:entry>
+				<ot:entry id="_27" name="Entry_Variablename">
+					<ot:translation lang="de" text="Variablenname (keine Leerzeichen)"/>
+					<ot:translation lang="en" text="Variablename (no spaces)"/>
+				</ot:entry>
+				<ot:entry id="_28" name="Entry_Variabletype">
+					<ot:translation lang="de" text="Variablentyp"/>
+					<ot:translation lang="en" text="Variabletype"/>
+				</ot:entry>
+				<ot:entry id="_29" name="Entry_IsArray">
+					<ot:translation lang="de" text="Handelt es sich um ein Array?"/>
+					<ot:translation lang="en" text="Is array?"/>
+				</ot:entry>
+				<ot:entry id="_30" name="Entry_ErrorSpaces">
+					<ot:translation lang="de" text="Bitte beheben Sie folgenden Fehler: Es sind keine Leerzeichen im Variablenname erlaubt"/>
+					<ot:translation lang="en" text="Please fix the following error: No spaces in variable names allowed&quot;"/>
+				</ot:entry>
+				<ot:entry id="_31" name="Entry_ErrorType">
+					<ot:translation lang="de" text="Bitte beheben Sie den folgenden Fehler: Der Variablentyp ist falsch. Prüfen Sie Ihre Eingabe."/>
+					<ot:translation lang="en" text="Please fix the following error: Wrong variable type"/>
+				</ot:entry>
+				<ot:entry id="_32" name="Entry_AdminFunctions">
+					<ot:translation lang="de" text="Administration"/>
+				</ot:entry>
+				<ot:entry id="_33" name="Entry_CreateConnector">
+					<ot:translation lang="de" text="Konnektorpaket erstellen"/>
+					<ot:translation lang="en" text="Create connector package"/>
+				</ot:entry>
+			</ot:dictionary>
+		</sem:extensionElements>
+	</sem:itemDefinition>
+	<sem:itemDefinition id="_34" ot:alias="strucConnectorVariables">
 		<sem:extensionElements>
 			<ot:structure name="strucConnectorVariables">
 				<ot:schemaObjectDescription>
@@ -17,7 +153,7 @@
 	</sem:itemDefinition>
 	<sem:itemDefinition id="_OT_CATALOG_GROUPS_">
 		<sem:extensionElements>
-			<ot:catalogGroup id="_2" name="Admin Functions_CatalogGroup" alias="AdminFunctionsCatalogGroup" displayName="Admin Functions">
+			<ot:catalogGroup id="_35" name="Admin Functions_CatalogGroup" alias="AdminFunctionsCatalogGroup" displayName="{_32}">
 				<ot:schemaObjectDescription>
 					<ot:translatedText lang="de"/>
 				</ot:schemaObjectDescription>
@@ -26,164 +162,219 @@
 	</sem:itemDefinition>
 	<sem:itemDefinition id="_OT_CATALOG_ENTRIES_">
 		<sem:extensionElements>
-			<ot:catalogEntry id="_3" name="Admin Functions_Catalog Entry" alias="AdminFunctionsCatalogEntry" group="_2" process="_4" title="Connector Template Generator" description="">
+			<ot:catalogEntry id="_36" name="Admin Functions_Catalog Entry" alias="AdminFunctionsCatalogEntry" group="_35" process="_37" title="{_33}" description="">
 				<ot:schemaObjectDescription>
 					<ot:translatedText lang="de"/>
 				</ot:schemaObjectDescription>
-				<ot:visibleFor>
-					<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-<aut_rule version="30" xmlns="http://www.omninet.de/schemas/importexport/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <rule>
-        <term>
-            <current_user/>
-            <is_superuser negate="false"/>
-        </term>
-    </rule>
-</aut_rule>
-]]>
-				</ot:visibleFor>
+				<ot:visibleFor/>
 			</ot:catalogEntry>
 		</sem:extensionElements>
 	</sem:itemDefinition>
 	<sem:itemDefinition id="_OT_CATEGORIES_">
 		<sem:extensionElements>
-			<ot:category id="_5" name="Admin Function_Category" alias="AdminFunctionCategory" displayName="Admin Function">
+			<ot:category id="_38" name="Admin Function_Category" alias="AdminFunctionCategory" displayName="Admin Function">
 				<ot:schemaObjectDescription>
 					<ot:translatedText lang="de"/>
 				</ot:schemaObjectDescription>
 			</ot:category>
 		</sem:extensionElements>
 	</sem:itemDefinition>
-	<sem:collaboration id="_7" ot:outerProcess="_8">
-		<sem:participant id="_9" name="Connector Template Generator" processRef="_4"/>
+	<sem:collaboration id="_40" ot:outerProcess="_41">
+		<sem:participant id="_42" name="{_2}" processRef="_37"/>
 	</sem:collaboration>
-	<sem:process name="Connector Template Generator_Canvas" ot:alias="ConnectorTemplateGeneratorCanvas" ot:displayName="Connector Template Generator" id="_8" ot:categoryRef="_5">
+	<sem:process name="Connector Template Generator_Canvas" ot:alias="ConnectorTemplateGeneratorCanvas" id="_41" ot:categoryRef="_38">
 		<sem:extensionElements>
 			<ot:startPermission/>
 		</sem:extensionElements>
 	</sem:process>
-	<sem:process name="Connector Template Generator_Pool" ot:alias="ConnectorTemplateGeneratorPool" ot:displayName="Connector Template Generator" id="_4" ot:categoryRef="_5" ot:title="&quot;Connector Template Generator (&quot; &amp; strConnectorName&amp; &quot;)&quot;">
+	<sem:process name="Connector Template Generator_Pool" ot:alias="ConnectorTemplateGeneratorPool" ot:displayName="{_2}" id="_37" ot:categoryRef="_38" ot:title="Translate(&quot;Dict.Entry_ConnectorTemplateGenerator&quot;) &amp; &quot;(&quot; &amp; strConnectorName &amp; &quot;)&quot;" ot:observer="Proc.StartUser">
 		<sem:extensionElements>
 			<ot:startPermission/>
 		</sem:extensionElements>
-		<sem:property id="_10" name="strVarType" ot:alias="strVarType" itemSubjectRef="ot:string"/>
-		<sem:property id="_11" name="intLoopCounter" ot:alias="intLoopCounter" itemSubjectRef="ot:longInt" ot:initialValue="0"/>
-		<sem:property id="_12" name="bolArray" ot:alias="bolArray" itemSubjectRef="ot:boolean" ot:initialValue="false"/>
-		<sem:property id="_13" name="strucArrayOfConnectorVariables" ot:alias="strucArrayOfConnectorVariables" itemSubjectRef="_array3" ot:initialValue="Array(Structure(&quot;strucConnectorVariables&quot;, strName: &quot;&quot;, bolInputparameter: false, strVariableType: &quot;&quot;, bolArray: false))"/>
-		<sem:property id="_14" name="intAmountOutParameters" ot:alias="intAmountOutParameters" itemSubjectRef="ot:longInt" ot:initialValue="0"/>
-		<sem:property id="_15" name="strVarName" ot:alias="strVarName" itemSubjectRef="ot:string"/>
-		<sem:property id="_16" name="intAmountInParameters" ot:alias="intAmountInParameters" itemSubjectRef="ot:longInt" ot:initialValue="0"/>
-		<sem:property id="_17" name="strConnectorName" ot:alias="strConnectorName" itemSubjectRef="ot:string"/>
-		<sem:property id="_18" name="bolErrorHandling" ot:alias="bolErrorHandling" itemSubjectRef="ot:boolean" ot:initialValue="false"/>
-		<sem:property id="_19" name="strPossibleVarTypes" ot:alias="strPossibleVarTypes" itemSubjectRef="ot:string" ot:initialValue="&quot;Boolean,Byte,DateTime,Double,LongInt,ShortInt,Single,String&quot;"/>
-		<sem:property id="_20" name="bolIsInput" ot:alias="bolIsInput" itemSubjectRef="ot:boolean" ot:initialValue="false"/>
-		<sem:property id="_21" name="strPath" ot:alias="strPath" itemSubjectRef="ot:string"/>
-		<sem:property id="_22" name="strConnectorPackageName" ot:alias="strConnectorPackageName" itemSubjectRef="ot:string"/>
-		<sem:laneSet id="_23" ot:alias="laneSetNode1">
-			<sem:lane id="_24" name="Administrator" ot:alias="AdministratorLane" ot:displayName="Administrator" ot:defaultResponsible="Proc.StartUser"/>
+		<sem:property id="_43" name="intAmountOut" ot:alias="intAmountOut" itemSubjectRef="ot:longInt" ot:initialValue="0"/>
+		<sem:property id="_44" name="strucArrayOfConnectorVariables" ot:alias="strucArrayOfConnectorVariables" itemSubjectRef="_array1" ot:initialValue="Array(Structure(&quot;strucConnectorVariables&quot;, strName: &quot;&quot;, bolInputparameter: false, strVariableType: &quot;&quot;, bolArray: false))"/>
+		<sem:property id="_45" name="strPath" ot:alias="strPath" itemSubjectRef="ot:string"/>
+		<sem:property id="_46" name="intLoopCounter" ot:alias="intLoopCounter" itemSubjectRef="ot:longInt" ot:initialValue="0"/>
+		<sem:property id="_47" name="strPossibleVarTypes" ot:alias="strPossibleVarTypes" itemSubjectRef="ot:string" ot:initialValue="&quot;Boolean,Byte,DateTime,Double,LongInt,ShortInt,Single,String&quot;"/>
+		<sem:property id="_48" name="bolArray" ot:alias="bolArray" itemSubjectRef="ot:boolean" ot:initialValue="false"/>
+		<sem:property id="_49" name="strVarType" ot:alias="strVarType" itemSubjectRef="ot:string"/>
+		<sem:property id="_50" name="strConnectorName" ot:alias="strConnectorName" itemSubjectRef="ot:string"/>
+		<sem:property id="_51" name="bolErrorHandling" ot:alias="bolErrorHandling" itemSubjectRef="ot:boolean" ot:initialValue="false"/>
+		<sem:property id="_52" name="intAmountIn" ot:alias="intAmountIn" itemSubjectRef="ot:longInt" ot:initialValue="0"/>
+		<sem:property id="_53" name="bolIsInput" ot:alias="bolIsInput" itemSubjectRef="ot:boolean" ot:initialValue="false"/>
+		<sem:property id="_54" name="strVarName" ot:alias="strVarName" itemSubjectRef="ot:string"/>
+		<sem:property id="_55" name="strConnectorPackageName" ot:alias="strConnectorPackageName" itemSubjectRef="ot:string"/>
+		<sem:laneSet id="_56" ot:alias="laneSetNode1">
+			<sem:lane id="_57" name="Administrator" ot:alias="AdministratorLane" ot:displayName="Administrator" ot:defaultResponsible="Proc.StartUser"/>
 		</sem:laneSet>
-		<sem:sequenceFlow id="_25" ot:alias="flow5" sourceRef="_26" targetRef="_27"/>
-		<sem:sequenceFlow id="_28" ot:alias="flow4" sourceRef="_29" targetRef="_30"/>
-		<sem:sequenceFlow id="_31" ot:alias="flow2" sourceRef="_32" targetRef="_33"/>
-		<sem:sequenceFlow id="_34" ot:alias="edge5" sourceRef="_33" targetRef="_35"/>
-		<sem:sequenceFlow id="_36" ot:alias="edge3" sourceRef="_30" targetRef="_26"/>
-		<sem:sequenceFlow id="_37" name="Error in inputs" ot:displayName="Error in inputs" ot:alias="edge7" sourceRef="_26" targetRef="_29">
+		<sem:sequenceFlow id="_58" ot:alias="flow6" sourceRef="_59" targetRef="_60"/>
+		<sem:sequenceFlow id="_61" ot:alias="edge1" sourceRef="_62" targetRef="_63"/>
+		<sem:sequenceFlow id="_64" ot:alias="edge2" sourceRef="_63" targetRef="_65"/>
+		<sem:sequenceFlow id="_66" name="Schleife, bis alle Variablen erfasst wurden" ot:displayName="{_5}" ot:alias="edge6" sourceRef="_67" targetRef="_65">
+			<sem:conditionExpression>intLoopCounter &lt;intAmountIn + intAmountOut</sem:conditionExpression>
+		</sem:sequenceFlow>
+		<sem:sequenceFlow id="_68" ot:alias="flow7" sourceRef="_69" targetRef="_70"/>
+		<sem:sequenceFlow id="_71" name="Fehler bei Eingabe" ot:displayName="{_7}" ot:alias="edge7" sourceRef="_72" targetRef="_65">
 			<sem:conditionExpression>InStr(strVarName, " ") &gt; 0 Or Not (strVarType = "Boolean" Or strVarType = "Byte" Or strVarType = "DateTime" Or strVarType = "Double" Or strVarType = "LongInt" Or strVarType = "ShortInt" Or strVarType = "Single" Or strVarType = "String")</sem:conditionExpression>
 		</sem:sequenceFlow>
-		<sem:sequenceFlow id="_38" ot:alias="flow7" sourceRef="_39" targetRef="_40"/>
-		<sem:sequenceFlow id="_41" name="Loop until all variables are captured" ot:displayName="Loop until all variables are captured" ot:alias="edge6" sourceRef="_32" targetRef="_29">
-			<sem:conditionExpression>intLoopCounter &lt;intAmountInParameters + intAmountOutParameters</sem:conditionExpression>
-		</sem:sequenceFlow>
-		<sem:sequenceFlow id="_42" ot:alias="edge2" sourceRef="_43" targetRef="_29"/>
-		<sem:sequenceFlow id="_44" ot:alias="edge1" sourceRef="_45" targetRef="_43"/>
-		<sem:sequenceFlow id="_46" ot:alias="flow6" sourceRef="_47" targetRef="_48"/>
-		<sem:sequenceFlow id="_49" ot:alias="edge4" sourceRef="_27" targetRef="_32"/>
-		<sem:exclusiveGateway id="_32" ot:alias="gateway3" isMarkerVisible="true" default="_31"/>
-		<sem:endEvent id="_35" name="end" ot:displayName="end" ot:alias="end"/>
-		<sem:startEvent id="_45" name="start" ot:displayName="start" ot:alias="start"/>
-		<sem:userTask id="_43" name="Input Connector Parameters" ot:displayName="Input Connector Parameters" ot:alias="InputConnectorParameters">
+		<sem:sequenceFlow id="_73" ot:alias="edge3" sourceRef="_74" targetRef="_72"/>
+		<sem:sequenceFlow id="_75" ot:alias="flow5" sourceRef="_72" targetRef="_76"/>
+		<sem:sequenceFlow id="_77" ot:alias="edge5" sourceRef="_78" targetRef="_79"/>
+		<sem:sequenceFlow id="_80" ot:alias="edge4" sourceRef="_76" targetRef="_67"/>
+		<sem:sequenceFlow id="_81" ot:alias="flow2" sourceRef="_67" targetRef="_78"/>
+		<sem:sequenceFlow id="_82" ot:alias="flow4" sourceRef="_65" targetRef="_74"/>
+		<sem:endEvent id="_60" ot:alias="event2"/>
+		<sem:boundaryEvent id="_59" ot:alias="event1" attachedToRef="_63">
+			<sem:dataOutput id="_d_83"/>
+			<sem:outputSet>
+				<sem:dataOutputRefs>_d_83</sem:dataOutputRefs>
+			</sem:outputSet>
+			<sem:errorEventDefinition errorRef="ot:UserTaskAborted"/>
+		</sem:boundaryEvent>
+		<sem:endEvent id="_70" ot:alias="event4"/>
+		<sem:startEvent id="_62" ot:alias="start"/>
+		<sem:endEvent id="_79" ot:alias="end"/>
+		<sem:exclusiveGateway id="_67" ot:alias="gateway3" isMarkerVisible="true" default="_81"/>
+		<sem:exclusiveGateway id="_65" ot:alias="gateway4" isMarkerVisible="true" default="_82"/>
+		<sem:boundaryEvent id="_69" ot:alias="event3" attachedToRef="_74">
+			<sem:dataOutput id="_d_84"/>
+			<sem:outputSet>
+				<sem:dataOutputRefs>_d_84</sem:dataOutputRefs>
+			</sem:outputSet>
+			<sem:errorEventDefinition errorRef="ot:UserTaskAborted"/>
+		</sem:boundaryEvent>
+		<sem:userTask id="_74" name="Variablen definieren" ot:displayName="{_6}" ot:alias="DefineVariables">
 			<sem:extensionElements>
-				<ot:userTaskDefinition title="&quot;Input Connector Parameters&quot;" description="&quot;Select the input parameters of your new Connector&quot;" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="&quot;Input Connector Parameters&quot;" otObject="">
-					<ot:staticText text="&quot;First define a name and the amount of input and output parameters.&quot;" displayAsStrongText="false"/>
-					<ot:staticText text="&quot;Amount of parameters must be 0 (zero) or higher&quot;" displayAsStrongText="false"/>
-					<ot:dataElement displayName="New Connector package name" variable="_22" mandatory="true"/>
-					<ot:dataElement displayName="New Connector name" variable="_17" mandatory="true"/>
-					<ot:dataElement displayName="Path" variable="_21" mandatory="true" initialValue="&quot;C:\&quot;"/>
-					<ot:dataElement displayName="Amount input variables" remark="Define the amount of input parameters of your new connector" variable="_16" mandatory="true"/>
-					<ot:dataElement displayName="Amount output variables" remark="Define the amount of output parameters of your new connector" variable="_14" mandatory="true"/>
-					<ot:dataElement displayName="Include Error Handling" variable="_18" initialValue="true"/>
-					<ot:staticText text="If Not (IsNumeric(intAmountInParameters) Or IsNumeric(intAmountOutParameters)) Then &quot;Please fix the following error(s):&quot;" displayAsStrongText="false"/>
-					<ot:staticText text="If Not (IsNumeric(intAmountInParameters) Or IsNumeric(intAmountOutParameters)) Then &quot;Please enter only numerics into the amount fields.&quot;" displayAsStrongText="false"/>
+				<ot:userTaskDefinition title="Translate(&quot;Dict.Entry_DefineVariables&quot;)" description="Translate(&quot;Dict.Entry_PleaseDefineVariables&quot;)" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="Translate(&quot;Dict.Entry_DefineVariables&quot;)" otObject="">
+					<ot:staticText text="If intLoopCounter &lt; intAmountIn Then Translate(&quot;Dict.Entry_InsertInput&quot;) &amp; &quot; &quot; &amp; CStr(intLoopCounter + 1) &amp; &quot;/&quot; &amp; intAmountIn Else Translate(&quot;Dict.Entry_InsertOutput&quot;) &amp; &quot; &quot; &amp; CStr(intLoopCounter - intAmountIn + 1) &amp; &quot;/&quot; &amp; intAmountOut" displayAsStrongText="false"/>
+					<ot:staticText text="Translate(&quot;Dict.Entry_SupportedVariabletypes&quot;)" displayAsStrongText="false"/>
+					<ot:dataElement displayName="{_27}" variable="_54" mandatory="true"/>
+					<ot:dataElement displayName="{_28}" variable="_49"/>
+					<ot:dataElement displayName="{_29}" variable="_48"/>
+					<ot:staticText text="If InStr(strVarName, &quot; &quot;) &gt; 0 Then Translate(&quot;Dict.Entry_ErrorSpaces&quot;)" displayAsStrongText="false"/>
+					<ot:staticText text="If InStr(strPossibleVarTypes, CStr(strVarType)) = 0 Then Translate(&quot;Dict.Entry_ErrorType&quot;)" displayAsStrongText="false"/>
 				</ot:userTaskDefinition>
 			</sem:extensionElements>
-			<sem:dataOutputAssociation id="_50">
-				<sem:targetRef>_20</sem:targetRef>
-				<sem:transformation>intAmountInParameters &gt; 0</sem:transformation>
+		</sem:userTask>
+		<sem:userTask id="_63" name="Konnektorpaket definieren" ot:displayName="{_8}" ot:alias="InputConnectorParameters">
+			<sem:extensionElements>
+				<ot:userTaskDefinition title="Translate(&quot;Dict.Entry_InputConnectorParameters&quot;)" description="Translate(&quot;Dict.Entry_SelectInputParameters&quot;)" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="Translate(&quot;Dict.Entry_InputConnectorParameters&quot;)" otObject="">
+					<ot:staticText text="Translate(&quot;Dict.Entry_FirstDefineImportantParameters&quot;)" displayAsStrongText="false"/>
+					<ot:staticText text="Translate(&quot;Dict.Entry_AmountOfParameters&quot;)" displayAsStrongText="false"/>
+					<ot:dataElement displayName="{_11}" variable="_55" mandatory="true"/>
+					<ot:dataElement displayName="{_12}" variable="_50" mandatory="true"/>
+					<ot:dataElement displayName="{_13}" remark="{_14}" variable="_52" mandatory="true"/>
+					<ot:dataElement displayName="{_15}" remark="{_16}" variable="_43" mandatory="true"/>
+					<ot:dataElement displayName="{_17}" variable="_45" mandatory="true" initialValue="&quot;C:\&quot;"/>
+					<ot:staticText text="Translate(&quot;Dict.Entry_PleaseDecideIncludeErrorHandling&quot;)" displayAsStrongText="false"/>
+					<ot:dataElement displayName="{_19}" variable="_51" initialValue="true"/>
+					<ot:staticText text="If Not (IsNumeric(intAmountIn) Or IsNumeric(intAmountOut)) Then Translate(&quot;Dict.Entry_FixErrors&quot;) &amp; &quot;:&quot;" displayAsStrongText="false"/>
+					<ot:staticText text="If Not (IsNumeric(intAmountIn) Or IsNumeric(intAmountOut)) Then Translate(&quot;Dict.Entry_PleaseEnterOnlyNumericsAmountFields&quot;)" displayAsStrongText="false"/>
+				</ot:userTaskDefinition>
+			</sem:extensionElements>
+			<sem:dataOutputAssociation id="_85">
+				<sem:targetRef>_53</sem:targetRef>
+				<sem:transformation>intAmountIn &gt; 0</sem:transformation>
 			</sem:dataOutputAssociation>
 		</sem:userTask>
-		<sem:exclusiveGateway id="_29" ot:alias="gateway4" isMarkerVisible="true" default="_28"/>
-		<sem:endEvent id="_40" ot:alias="event4"/>
-		<sem:scriptTask id="_27" name="Transfer into array" ot:displayName="Transfer into array" ot:alias="TransferIntoArray" scriptFormat="text/x-omnitracker-script">
+		<sem:serviceTask id="_78" name="Konnektorpaket erstellen" ot:displayName="{_3}" ot:alias="GenerateConnector" ot:connectorGuid="{7DEA8685-1A03-478A-B500-089722F0F927}">
 			<sem:ioSpecification>
-				<sem:dataInput id="_59" name="strucInArrayOfConnectorVariables" itemSubjectRef="_array3"/>
-				<sem:dataInput id="_57" name="bolInArray" itemSubjectRef="ot:boolean"/>
-				<sem:dataInput id="_55" name="strInVarType" itemSubjectRef="ot:string"/>
-				<sem:dataInput id="_53" name="bolInIsInput" itemSubjectRef="ot:boolean"/>
-				<sem:dataInput id="_51" name="strInVarName" itemSubjectRef="ot:string"/>
-				<sem:dataOutput id="_61" name="strucOutNewConnectorVariables" itemSubjectRef="_array3"/>
+				<sem:dataInput id="_95" name="Path" itemSubjectRef="ot:string"/>
+				<sem:dataInput id="_93" name="ConnectorPackageName" itemSubjectRef="ot:string"/>
+				<sem:dataInput id="_90" name="strucConnectorVariables" itemSubjectRef="_array2"/>
+				<sem:dataInput id="_88" name="WithErrorHandling" itemSubjectRef="ot:boolean"/>
+				<sem:dataInput id="_86" name="ConnectorName" itemSubjectRef="ot:string"/>
 				<sem:inputSet>
-					<sem:dataInputRefs>_51</sem:dataInputRefs>
-					<sem:dataInputRefs>_53</sem:dataInputRefs>
-					<sem:dataInputRefs>_55</sem:dataInputRefs>
-					<sem:dataInputRefs>_57</sem:dataInputRefs>
-					<sem:dataInputRefs>_59</sem:dataInputRefs>
+					<sem:dataInputRefs>_86</sem:dataInputRefs>
+					<sem:dataInputRefs>_88</sem:dataInputRefs>
+					<sem:dataInputRefs>_90</sem:dataInputRefs>
+					<sem:dataInputRefs>_93</sem:dataInputRefs>
+					<sem:dataInputRefs>_95</sem:dataInputRefs>
 				</sem:inputSet>
-				<sem:outputSet>
-					<sem:dataOutputRefs>_61</sem:dataOutputRefs>
-				</sem:outputSet>
+				<sem:outputSet/>
 			</sem:ioSpecification>
-			<sem:dataInputAssociation id="_52">
-				<sem:targetRef>_51</sem:targetRef>
-				<sem:transformation>strVarName</sem:transformation>
+			<sem:dataInputAssociation id="_87">
+				<sem:targetRef>_86</sem:targetRef>
+				<sem:transformation>strConnectorName</sem:transformation>
 			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_54">
-				<sem:targetRef>_53</sem:targetRef>
-				<sem:transformation>bolIsInput</sem:transformation>
+			<sem:dataInputAssociation id="_89">
+				<sem:targetRef>_88</sem:targetRef>
+				<sem:transformation>bolErrorHandling</sem:transformation>
 			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_56">
-				<sem:targetRef>_55</sem:targetRef>
-				<sem:transformation>strVarType</sem:transformation>
-			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_58">
-				<sem:targetRef>_57</sem:targetRef>
-				<sem:transformation>bolArray</sem:transformation>
-			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_60">
-				<sem:targetRef>_59</sem:targetRef>
+			<sem:dataInputAssociation id="_92">
+				<sem:targetRef>_90</sem:targetRef>
 				<sem:transformation>strucArrayOfConnectorVariables</sem:transformation>
 			</sem:dataInputAssociation>
-			<sem:dataOutputAssociation id="_62">
-				<sem:targetRef>_13</sem:targetRef>
+			<sem:dataInputAssociation id="_94">
+				<sem:targetRef>_93</sem:targetRef>
+				<sem:transformation>strConnectorPackageName</sem:transformation>
+			</sem:dataInputAssociation>
+			<sem:dataInputAssociation id="_96">
+				<sem:targetRef>_95</sem:targetRef>
+				<sem:transformation>strPath</sem:transformation>
+			</sem:dataInputAssociation>
+		</sem:serviceTask>
+		<sem:scriptTask id="_76" name="Struktur der Variablen erzeugen" ot:displayName="{_4}" ot:alias="TransferIntoArray" scriptFormat="text/x-omnitracker-script">
+			<sem:ioSpecification>
+				<sem:dataInput id="_105" name="strucInArrayOfConnectorVariables" itemSubjectRef="_array1"/>
+				<sem:dataInput id="_103" name="bolInArray" itemSubjectRef="ot:boolean"/>
+				<sem:dataInput id="_101" name="strInVarType" itemSubjectRef="ot:string"/>
+				<sem:dataInput id="_99" name="bolInIsInput" itemSubjectRef="ot:boolean"/>
+				<sem:dataInput id="_97" name="strInVarName" itemSubjectRef="ot:string"/>
+				<sem:dataOutput id="_107" name="strucOutNewConnectorVariables" itemSubjectRef="_array1"/>
+				<sem:inputSet>
+					<sem:dataInputRefs>_97</sem:dataInputRefs>
+					<sem:dataInputRefs>_99</sem:dataInputRefs>
+					<sem:dataInputRefs>_101</sem:dataInputRefs>
+					<sem:dataInputRefs>_103</sem:dataInputRefs>
+					<sem:dataInputRefs>_105</sem:dataInputRefs>
+				</sem:inputSet>
+				<sem:outputSet>
+					<sem:dataOutputRefs>_107</sem:dataOutputRefs>
+				</sem:outputSet>
+			</sem:ioSpecification>
+			<sem:dataInputAssociation id="_98">
+				<sem:targetRef>_97</sem:targetRef>
+				<sem:transformation>strVarName</sem:transformation>
+			</sem:dataInputAssociation>
+			<sem:dataInputAssociation id="_100">
+				<sem:targetRef>_99</sem:targetRef>
+				<sem:transformation>bolIsInput</sem:transformation>
+			</sem:dataInputAssociation>
+			<sem:dataInputAssociation id="_102">
+				<sem:targetRef>_101</sem:targetRef>
+				<sem:transformation>strVarType</sem:transformation>
+			</sem:dataInputAssociation>
+			<sem:dataInputAssociation id="_104">
+				<sem:targetRef>_103</sem:targetRef>
+				<sem:transformation>bolArray</sem:transformation>
+			</sem:dataInputAssociation>
+			<sem:dataInputAssociation id="_106">
+				<sem:targetRef>_105</sem:targetRef>
+				<sem:transformation>strucArrayOfConnectorVariables</sem:transformation>
+			</sem:dataInputAssociation>
+			<sem:dataOutputAssociation id="_108">
+				<sem:targetRef>_44</sem:targetRef>
 				<sem:transformation>strucOutNewConnectorVariables</sem:transformation>
 			</sem:dataOutputAssociation>
-			<sem:dataOutputAssociation id="_63">
-				<sem:targetRef>_11</sem:targetRef>
+			<sem:dataOutputAssociation id="_109">
+				<sem:targetRef>_46</sem:targetRef>
 				<sem:transformation>intLoopCounter+1</sem:transformation>
 			</sem:dataOutputAssociation>
-			<sem:dataOutputAssociation id="_64">
-				<sem:targetRef>_15</sem:targetRef>
+			<sem:dataOutputAssociation id="_110">
+				<sem:targetRef>_54</sem:targetRef>
 				<sem:transformation>""</sem:transformation>
 			</sem:dataOutputAssociation>
-			<sem:dataOutputAssociation id="_65">
-				<sem:targetRef>_20</sem:targetRef>
-				<sem:transformation>intLoopCounter &lt; intAmountInParameters</sem:transformation>
+			<sem:dataOutputAssociation id="_111">
+				<sem:targetRef>_53</sem:targetRef>
+				<sem:transformation>intLoopCounter &lt; intAmountIn</sem:transformation>
 			</sem:dataOutputAssociation>
-			<sem:dataOutputAssociation id="_66">
-				<sem:targetRef>_10</sem:targetRef>
+			<sem:dataOutputAssociation id="_112">
+				<sem:targetRef>_49</sem:targetRef>
 				<sem:transformation>""</sem:transformation>
 			</sem:dataOutputAssociation>
-			<sem:dataOutputAssociation id="_67">
-				<sem:targetRef>_12</sem:targetRef>
+			<sem:dataOutputAssociation id="_113">
+				<sem:targetRef>_48</sem:targetRef>
 				<sem:transformation>false</sem:transformation>
 			</sem:dataOutputAssociation>
 			<sem:script>strName = DataInput("strInVarName")
@@ -207,179 +398,112 @@ strucConnectorVariables(UBound(strucConnectorVariables)) = strucNewVariable
 
 DataOutput("strucOutNewConnectorVariables") = strucConnectorVariables</sem:script>
 		</sem:scriptTask>
-		<sem:serviceTask id="_33" name="Generate Connector" ot:displayName="Generate Connector" ot:alias="GenerateConnector" ot:connectorGuid="{7DEA8685-1A03-478A-B500-089722F0F927}">
-			<sem:ioSpecification>
-				<sem:dataInput id="_77" name="Path" itemSubjectRef="ot:string"/>
-				<sem:dataInput id="_75" name="ConnectorPackageName" itemSubjectRef="ot:string"/>
-				<sem:dataInput id="_72" name="strucConnectorVariables" itemSubjectRef="_array4"/>
-				<sem:dataInput id="_70" name="WithErrorHandling" itemSubjectRef="ot:boolean"/>
-				<sem:dataInput id="_68" name="ConnectorName" itemSubjectRef="ot:string"/>
-				<sem:inputSet>
-					<sem:dataInputRefs>_68</sem:dataInputRefs>
-					<sem:dataInputRefs>_70</sem:dataInputRefs>
-					<sem:dataInputRefs>_72</sem:dataInputRefs>
-					<sem:dataInputRefs>_75</sem:dataInputRefs>
-					<sem:dataInputRefs>_77</sem:dataInputRefs>
-				</sem:inputSet>
-				<sem:outputSet/>
-			</sem:ioSpecification>
-			<sem:dataInputAssociation id="_69">
-				<sem:targetRef>_68</sem:targetRef>
-				<sem:transformation>strConnectorName</sem:transformation>
-			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_71">
-				<sem:targetRef>_70</sem:targetRef>
-				<sem:transformation>bolErrorHandling</sem:transformation>
-			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_74">
-				<sem:targetRef>_72</sem:targetRef>
-				<sem:transformation>strucArrayOfConnectorVariables</sem:transformation>
-			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_76">
-				<sem:targetRef>_75</sem:targetRef>
-				<sem:transformation>strConnectorPackageName</sem:transformation>
-			</sem:dataInputAssociation>
-			<sem:dataInputAssociation id="_78">
-				<sem:targetRef>_77</sem:targetRef>
-				<sem:transformation>strPath</sem:transformation>
-			</sem:dataInputAssociation>
-		</sem:serviceTask>
-		<sem:userTask id="_30" name="Define Variable(s)" ot:displayName="Define Variable(s)" ot:alias="InputVariables">
-			<sem:extensionElements>
-				<ot:userTaskDefinition title="&quot;Input Variable&quot;" description="&quot;Input Variable&quot;" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="&quot;Input Variable&quot;" otObject="">
-					<ot:staticText text="&quot;Please insert variable data for&quot;" displayAsStrongText="false"/>
-					<ot:staticText text="If intLoopCounter &lt; intAmountInParameters Then &quot;Input parameter nr. &quot; &amp; CStr(intLoopCounter + 1) &amp; &quot;/&quot; &amp; intAmountInParameters Else &quot;Output parameter nr. &quot; &amp; CStr(intLoopCounter - intAmountInParameters + 1) &amp; &quot;/&quot; &amp; intAmountOutParameters" displayAsStrongText="false"/>
-					<ot:dataElement displayName="Variablename (no spaces)" variable="_15" mandatory="true"/>
-					<ot:dataElement displayName="Is input variable" variable="_20" readOnly="true"/>
-					<ot:dataElement displayName="Is array" variable="_12"/>
-					<ot:dataElement displayName="Variabletype" variable="_10"/>
-					<ot:staticText text="&quot;Please note: Supported variabletypes (case sensitive): Boolean, Byte, DateTime, Double, LongInt, ShortInt, Single, String&quot;" displayAsStrongText="false"/>
-					<ot:staticText text="If InStr(strVarName, &quot; &quot;) &gt; 0 Then &quot;Please fix the following error: No spaces in varibale names allowed&quot;" displayAsStrongText="false"/>
-					<ot:staticText text="If InStr(strPossibleVarTypes, CStr(strVarType)) = 0 Then &quot;Please fix the following error: Wrong variable type&quot;" displayAsStrongText="false"/>
-				</ot:userTaskDefinition>
-			</sem:extensionElements>
-		</sem:userTask>
-		<sem:exclusiveGateway id="_26" ot:alias="gateway5" isMarkerVisible="true" default="_25"/>
-		<sem:boundaryEvent id="_47" ot:alias="event1" attachedToRef="_43">
-			<sem:dataOutput id="_d_79"/>
-			<sem:outputSet>
-				<sem:dataOutputRefs>_d_79</sem:dataOutputRefs>
-			</sem:outputSet>
-			<sem:errorEventDefinition errorRef="ot:UserTaskAborted"/>
-		</sem:boundaryEvent>
-		<sem:endEvent id="_48" ot:alias="event2"/>
-		<sem:boundaryEvent id="_39" ot:alias="event3" attachedToRef="_30">
-			<sem:dataOutput id="_d_80"/>
-			<sem:outputSet>
-				<sem:dataOutputRefs>_d_80</sem:dataOutputRefs>
-			</sem:outputSet>
-			<sem:errorEventDefinition errorRef="ot:UserTaskAborted"/>
-		</sem:boundaryEvent>
+		<sem:exclusiveGateway id="_72" ot:alias="gateway5" isMarkerVisible="true" default="_75"/>
 	</sem:process>
-	<sem:itemDefinition id="_73" ot:structName="strucConnectorVariables" ot:packageGuid="{8F9F7351-4D6B-428E-84E2-7EFD401D0608}"/>
-	<bpmndi:BPMNDiagram id="_6" name="Connector Template Generator_Diagram">
-		<bpmndi:BPMNPlane ot:alias="ConnectorTemplateGeneratorDiagram" ot:versionName="1" bpmnElement="_7">
+	<sem:itemDefinition id="_91" ot:structName="strucConnectorVariables" ot:packageGuid="{8F9F7351-4D6B-428E-84E2-7EFD401D0608}"/>
+	<bpmndi:BPMNDiagram id="_39" name="Connector Template Generator_Diagram">
+		<bpmndi:BPMNPlane ot:alias="ConnectorTemplateGeneratorDiagram" ot:versionName="1" ot:diagramType="executable" bpmnElement="_40">
 			<di:extension>
 				<ot:schemaObjectDescription>
 					<ot:translatedText lang="de"/>
 				</ot:schemaObjectDescription>
 			</di:extension>
-			<bpmndi:BPMNShape bpmnElement="_9" isHorizontal="true">
+			<bpmndi:BPMNShape bpmnElement="_42" isHorizontal="true">
 				<dc:Bounds x="0" y="0" width="1129" height="264"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_24" isHorizontal="true">
+			<bpmndi:BPMNShape bpmnElement="_57" isHorizontal="true">
 				<dc:Bounds x="0" y="0" width="1129" height="264"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNEdge bpmnElement="_25">
-				<di:waypoint x="584.5" y="125"/>
-				<di:waypoint x="676.5" y="125"/>
+			<bpmndi:BPMNEdge bpmnElement="_58">
+				<di:waypoint x="221.633333333333" y="172"/>
+				<di:waypoint x="221.633333333333" y="198.5"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_28">
-				<di:waypoint x="344.5" y="126"/>
-				<di:waypoint x="397.5" y="126"/>
+			<bpmndi:BPMNEdge bpmnElement="_61">
+				<di:waypoint x="110" y="127"/>
+				<di:waypoint x="141" y="127"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_31">
-				<di:waypoint x="869.5" y="123"/>
-				<di:waypoint x="938.5" y="123"/>
+			<bpmndi:BPMNEdge bpmnElement="_64">
+				<di:waypoint x="259" y="126"/>
+				<di:waypoint x="302.5" y="126"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_34">
-				<di:waypoint x="1028.5" y="123"/>
-				<di:waypoint x="1082" y="123"/>
-			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_36">
-				<di:waypoint x="498.5" y="125"/>
-				<di:waypoint x="542.5" y="125"/>
-			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_37">
-				<di:waypoint x="563.5" y="146"/>
-				<di:waypoint x="563.5" y="241"/>
-				<di:waypoint x="323.5" y="241"/>
-				<di:waypoint x="323.5" y="147"/>
-			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_38">
-				<di:waypoint x="465.955555555556" y="171"/>
-				<di:waypoint x="465.955555555556" y="195.5"/>
-			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_41">
+			<bpmndi:BPMNEdge bpmnElement="_66">
 				<di:waypoint x="848.5" y="102"/>
 				<di:waypoint x="848.5" y="55"/>
 				<di:waypoint x="323.5" y="55"/>
 				<di:waypoint x="323.5" y="105"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_42">
-				<di:waypoint x="259" y="126"/>
-				<di:waypoint x="302.5" y="126"/>
+			<bpmndi:BPMNEdge bpmnElement="_68">
+				<di:waypoint x="465.955555555556" y="171"/>
+				<di:waypoint x="465.955555555556" y="195.5"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_44">
-				<di:waypoint x="120" y="127"/>
-				<di:waypoint x="169" y="127"/>
+			<bpmndi:BPMNEdge bpmnElement="_71">
+				<di:waypoint x="563.5" y="146"/>
+				<di:waypoint x="563.5" y="241"/>
+				<di:waypoint x="323.5" y="241"/>
+				<di:waypoint x="323.5" y="147"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_46">
-				<di:waypoint x="230.5" y="172"/>
-				<di:waypoint x="230.5" y="198.5"/>
+			<bpmndi:BPMNEdge bpmnElement="_73">
+				<di:waypoint x="498.5" y="125"/>
+				<di:waypoint x="542.5" y="125"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="_49">
-				<di:waypoint x="766.5" y="123"/>
-				<di:waypoint x="827.5" y="123"/>
+			<bpmndi:BPMNEdge bpmnElement="_75">
+				<di:waypoint x="584.5" y="125"/>
+				<di:waypoint x="651.7" y="125"/>
 			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNShape bpmnElement="_32">
-				<dc:Bounds x="827.5" y="102" width="42" height="42"/>
+			<bpmndi:BPMNEdge bpmnElement="_77">
+				<di:waypoint x="1060.5" y="123"/>
+				<di:waypoint x="1082" y="123"/>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge bpmnElement="_80">
+				<di:waypoint x="772.1" y="124.6"/>
+				<di:waypoint x="827.5" y="124.6"/>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge bpmnElement="_81">
+				<di:waypoint x="869.5" y="123"/>
+				<di:waypoint x="938.5" y="123"/>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge bpmnElement="_82">
+				<di:waypoint x="344.5" y="126"/>
+				<di:waypoint x="397.5" y="126"/>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNShape bpmnElement="_60">
+				<dc:Bounds x="206.5" y="198.5" width="32" height="32"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_35">
-				<dc:Bounds x="1082" y="109" width="32" height="32"/>
+			<bpmndi:BPMNShape bpmnElement="_59">
+				<dc:Bounds x="205.633333333333" y="140" width="32" height="32"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_45">
-				<dc:Bounds x="88" y="111" width="32" height="32"/>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_43">
-				<dc:Bounds x="169" y="96" width="90" height="60"/>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_29">
-				<dc:Bounds x="302.5" y="105" width="42" height="42"/>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_40">
+			<bpmndi:BPMNShape bpmnElement="_70">
 				<dc:Bounds x="448.5" y="195.5" width="32" height="32"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_27">
-				<dc:Bounds x="676.5" y="93" width="90" height="60"/>
+			<bpmndi:BPMNShape bpmnElement="_62">
+				<dc:Bounds x="78" y="111" width="32" height="32"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_33">
-				<dc:Bounds x="938.5" y="93" width="90" height="60"/>
+			<bpmndi:BPMNShape bpmnElement="_79">
+				<dc:Bounds x="1082" y="109" width="32" height="32"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_30">
+			<bpmndi:BPMNShape bpmnElement="_67">
+				<dc:Bounds x="827.5" y="102" width="42" height="42"/>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="_65">
+				<dc:Bounds x="302.5" y="105" width="42" height="42"/>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="_69">
+				<dc:Bounds x="449.955555555556" y="139" width="32" height="32"/>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="_74">
 				<dc:Bounds x="397.5" y="95" width="101" height="60"/>
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_26">
+			<bpmndi:BPMNShape bpmnElement="_63">
+				<dc:Bounds x="141" y="96" width="118" height="60"/>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="_78">
+				<dc:Bounds x="938.5" y="93" width="122" height="60"/>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="_76">
+				<dc:Bounds x="651.7" y="94.6" width="120.4" height="60"/>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="_72">
 				<dc:Bounds x="542.5" y="104" width="42" height="42"/>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_47">
-				<dc:Bounds x="214.5" y="140" width="32" height="32"/>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_48">
-				<dc:Bounds x="214.5" y="198.5" width="32" height="32"/>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="_39">
-				<dc:Bounds x="449.955555555556" y="139" width="32" height="32"/>
 			</bpmndi:BPMNShape>
 		</bpmndi:BPMNPlane>
 	</bpmndi:BPMNDiagram>
