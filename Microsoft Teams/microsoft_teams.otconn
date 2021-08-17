@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<connectorPackage guid="{e2e65dee-2e97-49bd-9749-57d5590cd298}" category="MS Teams Functions" language="PowerShell">
+		<script>
+			<![CDATA[
+				if ($ctx.ConnectorName -eq 'Send multipurpose Message')
+				{
+					# Important Parameters
+					$BPMNProcID				= $ctx.Input('BPMNProcID')
+					$ObjectNumber			= $ctx.Input('ObjectNumber')
+					$ObjectName				= $ctx.Input('ObjectName')
+					$ObjectTitle			= $ctx.Input('ObjectTitle')
+					$Message	            = $ctx.Input('Message')
+					$MessageCardTitle		= $ctx.Input('MessageCardTitle')
+					$ReportingPerson		= $ctx.Input('ReportingPerson')
+					$ResponsiblePerson		= $ctx.Input('ResponsiblePerson')
+					$TeamChannelWebhook		= $ctx.Input('TeamChannelWebhook')
+					$PotentialActions		= $ctx.Input('PotentialActions')
+
+					# Error Handling
+					$HasError = $FALSE
+					$ErrorMessage = ""
+
+					# Message for Channel
+					$BodyTemplate = @"
+						{
+							"@type": "MessageCard",
+							"@context": "https://schema.org/extensions",
+							"summary": "ADUserLockOut-Notification",
+							"themeColor": "AFE31B",
+							"title": "$MessageCardTitle",
+							"sections": [
+								{
+									"activityTitle": "$ResponsiblePerson",
+									"activitySubtitle": "IT ServiceDesk",
+									"facts": [
+										{
+											"name": "Ticket:",
+											"value": "$(if ([string]::IsNullOrEmpty($ObjectNumber)){$ObjectNumber + " "} $ObjectName)"
+										},
+										{
+											"name": "Betreff:",
+											"value": "$ObjectTitle"
+										},
+										{
+											"name": "Meldende Person:",
+											"value": "$ReportingPerson"
+										},
+										{
+											"name": "Beschreibung:",
+											"value": "$Message"
+										}
+									],
+									"text": "Informationen über dieses Ticket"
+								}
+							],
+							"potentialAction": $PotentialActions
+						}
+"@
+
+					try {
+						# Invoke REST Method
+						Invoke-RestMethod -Method post -ContentType 'Application/Json' -Body ([System.Text.Encoding]::UTF8.GetBytes($BodyTemplate)) -Uri $TeamChannelWebhook
+					}
+					catch {
+						$HasError = $TRUE
+						$ErrorMessage = "Error with Invoke-RestMethod: " + $_.Exception.Message
+					}
+					$ctx.Output('HasError') = $HasError
+       				$ctx.Output('ErrorMessage') = $ErrorMessage
+				}
+				if ($ctx.ConnectorName -eq 'Create new Team')
+				{
+					Set-ExecutionPolicy RemoteSigned
+					Import-Module MicrosoftTeams
+
+					# Important Input Parameters 
+					$DisplayName 	= $ctx.Input('DisplayName') #Name of the project
+					$TeamsPassword 	= $ctx.Input('TeamsPassword')
+					$TeamsUser 		= $ctx.Input('TeamsUser') 
+					$TenantID 		= $ctx.Input('TenantID')
+
+					# Error Handling
+					$HasError = $FALSE
+					$ErrorMessage = ""					
+					
+					$secpasswd = ConvertTo-SecureString $TeamsPassword -AsPlainText -Force
+					$MSTCredential = New-Object System.Management.Automation.PSCredential($TeamsUser, $secpasswd)
+					
+					
+					try {
+						#Create Team in MS Teams
+						Connect-MicrosoftTeams -Credential $MSTCredential -TenantID $TenantID -Verbose
+						$Group = New-Team -DisplayName $DisplayName
+		
+						#Output Parameters
+						$GroupIdOutput = $Group.GroupId
+						$ctx.Output("GroupIdOutput") = $GroupIdOutput
+					}	
+					catch {
+						$HasError = $TRUE
+						$ErrorMessage = "Error with connection to MS Teams: " + $_.Exception.Message
+					}
+					
+					$ctx.Output('HasError') = $HasError
+       				$ctx.Output('ErrorMessage') = $ErrorMessage
+							
+				}
+				if ($ctx.ConnectorName -eq 'Create new TeamChannel')
+				{
+					Set-ExecutionPolicy RemoteSigned
+					Import-Module MicrosoftTeams
+
+					# Important Parameters 
+					$GroupId 		= $ctx.Input('GroupID') 
+					$DisplayName 	= $ctx.Input('DisplayName') #Name of the project phase
+					$TeamsPassword 	= $ctx.Input('TeamsPassword')
+					$TeamsUser 		= $ctx.Input('TeamsUser') 
+					$TenantID 		= $ctx.Input('TenantID')
+
+					$secpasswd = ConvertTo-SecureString $TeamsPassword -AsPlainText -Force
+					$MSTCredential = New-Object System.Management.Automation.PSCredential($TeamsUser, $secpasswd)
+					
+					# Error Handling
+					$HasError = $FALSE
+					$ErrorMessage = ""
+					
+					try {
+					# Create Channel in MS Teams 
+					Connect-MicrosoftTeams -Credential $MSTCredential -TenantID $TenantID -Verbose
+					New-TeamChannel -GroupId $GroupId -DisplayName $DisplayName
+					}
+					catch {
+						$HasError = $TRUE
+						$ErrorMessage = "Error with connection to MS Teams: " + $_.Exception.Message
+					}
+					
+					$ctx.Output('HasError') = $HasError
+       				$ctx.Output('ErrorMessage') = $ErrorMessage
+				}
+
+				if ($ctx.ConnectorName -eq 'Remove Team')
+				{
+					Set-ExecutionPolicy RemoteSigned
+					Import-Module MicrosoftTeams
+
+					# Important Parameters 
+					$GroupId 		= $ctx.Input('GroupID') 
+					$TeamsPassword 	= $ctx.Input('TeamsPassword')
+					$TeamsUser 		= $ctx.Input('TeamsUser') 
+					$TenantID 		= $ctx.Input('TenantID')
+
+					$secpasswd = ConvertTo-SecureString $TeamsPassword -AsPlainText -Force
+					$MSTCredential = New-Object System.Management.Automation.PSCredential($TeamsUser, $secpasswd)
+					
+					# Error Handling
+					$HasError = $FALSE
+					$ErrorMessage = ""
+					
+					try {
+					# Create Channel in MS Teams 
+					Connect-MicrosoftTeams -Credential $MSTCredential -TenantID $TenantID -Verbose
+					Remove-Team -GroupId $GroupId
+					}
+					catch {
+						$HasError = $TRUE
+						$ErrorMessage = "Error with connection to MS Teams: " + $_.Exception.Message
+					}
+					
+					$ctx.Output('HasError') = $HasError
+       				$ctx.Output('ErrorMessage') = $ErrorMessage
+				}
+			]]>
+		</script>
+	<connectors>
+		<connector name="Send multipurpose Message" description="Send Message to MS Teams" guid="25cfb437-a60f-4303-a73b-b65c5fdb1063">
+			<input>
+				<inputParameter name="ObjectNumber" type="String" isArray="false" description="ObjectNumber" priority="1"/>
+				<inputParameter name="ObjectName" type="String" isArray="false" description="ObjectName" priority="2"/>
+				<inputParameter name="ObjectTitle" type="String" isArray="false" description="ObjectTitle" priority="3"/>
+				<inputParameter name="Message" type="String" isArray="false" description="Message" priority="4"/>
+				<inputParameter name="MessageCardTitle" type="String" isArray="false" description="MessageCardTitle" priority="5"/>
+				<inputParameter name="ReportingPerson" type="String" isArray="false" description="ReportingPerson" priority="6"/>
+				<inputParameter name="ResponsiblePerson" type="String" isArray="false" description="ResponsiblePerson" priority="7"/>
+				<inputParameter name="TeamChannelWebhook" type="String" isArray="false" description="TeamChannelWebhook" priority="8"/>
+				<inputParameter name="PotentialActions" type="String" isArray="false" description="PotentialActions" priority="9"/>
+				<inputParameter name="BPMNProcID" type="String" isArray="false" description="BPMNProcID" priority="10"/>
+			</input>
+			<output>
+				<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean" priority="1"/>
+				<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message" priority="2"/>
+			</output>
+		</connector>
+		<connector name="Create new Team" description="Creation of a new Team in MS Teams" guid="b20b1c15-7415-42d6-884c-544f3a83e810">
+			<input>
+				<inputParameter name="DisplayName" type="String" isArray="false" description="DisplayName" priority="1"/>
+				<inputParameter name="TeamsPassword" type="String" isArray="false" description="TeamsPassword" priority="2"/>
+				<inputParameter name="TeamsUser" type="String" isArray="false" description="TeamsUser" priority="3"/>
+				<inputParameter name="TenantID" type="String" isArray="false" description="TenantID" priority="4"/>
+			</input>
+			<output>
+				<outputParameter name="GroupIdOutput" type="String" isArray="false" description="GroupIdOutput" priority="1"/>
+				<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean" priority="2"/>
+				<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message" priority="3"/>
+			</output>
+		</connector>
+		<connector name="Create new TeamChannel" description="Creation of a new Team Channel in MS Teams" guid="ed4f03a2-4497-4ab0-bd28-85e7d0701153">
+			<input>
+				<inputParameter name="GroupID" type="String" isArray="false" description="GroupID" priority="1"/>
+				<inputParameter name="DisplayName" type="String" isArray="false" description="DisplayName" priority="2"/>
+				<inputParameter name="TeamsPassword" type="String" isArray="false" description="TeamsPassword" priority="3"/>
+				<inputParameter name="TeamsUser" type="String" isArray="false" description="TeamsUser" priority="4"/>
+				<inputParameter name="TenantID" type="String" isArray="false" description="TenantID" priority="5"/>
+			</input>
+			<output>
+				<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean" priority="1"/>
+				<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message" priority="2"/>
+			</output>
+		</connector> 
+		<connector name="Remove Team" description="Deletion of a Team in MS Teams" guid="53c404e7-bb0c-4781-a7a0-6fceda4ce49e">
+			<input>
+				<inputParameter name="GroupID" type="String" isArray="false" description="GroupID" priority="1"/>
+				<inputParameter name="TeamsPassword" type="String" isArray="false" description="TeamsPassword" priority="2"/>
+				<inputParameter name="TeamsUser" type="String" isArray="false" description="TeamsUser" priority="3"/>
+				<inputParameter name="TenantID" type="String" isArray="false" description="TenantID" priority="4"/>
+			</input>
+			<output>
+				<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean" priority="1"/>
+				<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message" priority="2"/>
+			</output>
+		</connector> 
+	</connectors>
+</connectorPackage>
