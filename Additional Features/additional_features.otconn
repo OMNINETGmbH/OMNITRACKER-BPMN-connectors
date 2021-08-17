@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectorPackage guid="{14e234b5-539d-46ec-ba17-8d710cdd29f3}" category="Additional Features" language="PowerShell">
+    <script>
+
+    <![CDATA[
+    ########################################################################################################
+    ###################     Logging Connector
+    ########################################################################################################
+    ##
+    if ($ctx.ConnectorName -eq 'Create LogEntry') {
+        # Captureing Input Parameters
+        $ProcID = $ctx.Input('ProcID')
+        $LogMessage = $ctx.Input('LogMessage')
+        $dt = Get-Date -Format yyyyMMdd
+        $dttime = Get-Date -Format yyyyMMddHHmmss
+
+        $Location = $ctx.Input('SaveLocation')
+        if (-Not $Location) {
+            $Location = "C:\OmnitrackerLogs\ConnectorLogs\"
+        }
+
+        $FileName = $ctx.Input('FileName')
+        if ($FileName) {
+            $FileName -replace ".txt", ""
+        } else {
+            $FileName = "bpmn_engine_log"
+        }
+
+        $FullPath = Join-Path -Path $Location -ChildPath "$($FileName)_$($dt).txt"
+        if (-Not(Test-Path -Path $FullPath)) {New-Item -Path $FullPath -Force}
+
+        $HasError = $FALSE
+        $ErrorMessage = ""
+
+        Try {
+            Add-Content -Path $FullPath -Value "#####`r`n$($dttime):`r`n Process with ID $($ProcID) created following LogEntry: `r`n`t$($LogMessage)" -Force
+        }
+        Catch {
+            $HasError = $TRUE
+            $ErrorMessage = "Something went wrong while creating LogEntry.`r`n`r`n Following error occured while creating specialized LogEntry: $($_.Exception.Message)"
+        }
+
+        $ctx.Output('HasError') = $HasError
+        $ctx.Output('ErrorMessage') = $ErrorMessage
+    }
+
+    ########################################################################################################
+    ###################     Interface Connector
+    ########################################################################################################
+    ##
+    if ($ctx.ConnectorName -eq 'Interface Call') {
+        # Captureing Input Parameters
+        $ProcID = $ctx.Input('ProcID')
+        $RestMethod = $ctx.Input('RestMethod')
+        $DestinationURI = $ctx.Input('DestinationURI')
+        $Header = $ctx.Input('Header')
+        $Body = $ctx.Input('Body')
+        $AuthMethod = $ctx.Input('AuthMethod')
+        $Username = $ctx.Input('Username')
+        $Password = $ctx.Input('Password')
+
+        $ResponseContent = ""
+        $ResponseCode = 0
+
+        #Error Handling Variables
+        $HasError = $FALSE
+        $ErrorMessage = ""
+
+        try {
+            #Caution: Only Powershell 5.1 parameters are used in Invoke-WebRequest
+            if ($AuthMethod -eq 'Basic') {
+                $pair = "$($Username):$($Password)"
+                $encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($pair))
+                $basicAuthValue = "Basic $encodedCreds"
+
+                $Header = @{
+Authorization = $basicAuthValue
+}
+            }
+            elseif ($AuthMethod -eq 'Token') {
+                # This Method is still under construction
+            }
+            if ($Body -eq '' -or $Body -eq $null){
+                $Response = Invoke-WebRequest -Method $RestMethod -Headers $Header -ContentType 'Application/Json' -Uri $DestinationURI -UseBasicParsing
+            }
+            else {
+                $Response = Invoke-WebRequest -Method $RestMethod -Headers $Header -ContentType 'Application/Json' -Body ([System.Text.Encoding]::UTF8.GetBytes($Body)) -Uri $DestinationURI -UseBasicParsing
+            }
+            $ResponseContent = $Response.Content
+            $ResponseCode = $Response.StatusCode
+        }
+        catch {
+            $HasError = $TRUE
+            $ErrorMessage = "Error with Rest Call. Error Message: `r`n`t$($_.Exception.Message)"
+        }
+        
+        $ctx.Output('HasError') = $HasError
+        $ctx.Output('ErrorMessage') = $ErrorMessage
+        $ctx.Output('ResponseContent') = $ResponseContent
+        $ctx.Output('ResponseCode') = $ResponseCode
+    }
+
+    ########################################################################################################
+    ###################     HMAC Decrypter
+    ########################################################################################################
+    ##
+    if ($ctx.ConnectorName -eq 'Decrypt HMAC') {
+        # Captureing Input Parameters
+        $ProcID = $ctx.Input('ProcID')
+        $HMACToken = $ctx.Input('HMACToken')
+        $Message = $ctx.Input('EncryptedMessage')
+        $Algorithm = $ctx.Input('Algorithm')
+
+        $HasError = $FALSE
+        $ErrorMessage = ""
+        $Signature = ""
+
+        Try {
+            $hmacsha = switch ($Algorithm) {
+                "MD5" { New-Object System.Security.Cryptography.HMACMD5; break }
+                "SHA1" { New-Object System.Security.Cryptography.HMACSHA1; break }
+                "SHA256" { New-Object System.Security.Cryptography.HMACSHA256; break }
+                "SHA384" { New-Object System.Security.Cryptography.HMACSHA384; break }
+                "SHA512" { New-Object System.Security.Cryptography.HMACSHA512; break }
+                Default { New-Object System.Security.Cryptography.HMACSHA256; break } # included for error handling if input has a typo
+            }
+            $hmacsha.key = [Text.Encoding]::ASCII.GetBytes($HMACToken)
+            $Signature = $hmacsha.ComputeHash([Text.Encoding]::ASCII.GetBytes($Message))
+            $Signature = [Convert]::ToBase64String($Signature)
+        }
+        Catch {
+            $HasError = $TRUE
+            $ErrorMessage = "Something went wrong while decrypting message.`r`n`r`n Following error occured: $($_.Exception.Message)"
+        }
+
+        $ctx.Output('HasError') = $HasError
+        $ctx.Output('ErrorMessage') = $ErrorMessage
+        $ctx.Output('Signature') = $Signature
+    }
+
+
+    ########################################################################################################
+    ###################     De- or Encode Base64 Strings
+    ########################################################################################################
+    ##
+    if ($ctx.ConnectorName -eq 'Decode Encode Base64 String') {
+        # Captureing Input Parameters
+        $SourceString = $ctx.Input('SourceString')
+        $EncodingType = $ctx.Input('EncodingType')
+        $SourceIsBase64 = $ctx.Input('SourceIsBase64')
+
+        $HasError = $FALSE
+        $ErrorMessage = ""
+
+        Try {
+            switch ($EncodingType) {
+                'UTF8' {
+                    if ($SourceIsBase64) { $newString = [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($SourceString)) }
+                    else { $newString = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($SourceString)) }
+                }
+                'ASCII' {
+                    if ($SourceIsBase64) { $newString = [Text.Encoding]::ASCII.GetString([Convert]::FromBase64String($SourceString)) }
+                    else { $newString = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($SourceString)) }
+                }
+                Default {
+                    if ($SourceIsBase64) { $newString = [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($SourceString)) }
+                    else { $newString = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($SourceString)) }
+                }
+            }
+        }
+        Catch {
+            $HasError = $TRUE
+            $ErrorMessage = "Something went wrong and following error occured: $($_.Exception.Message)"
+        }
+
+        $ctx.Output('HasError') = $HasError
+        $ctx.Output('ErrorMessage') = $ErrorMessage
+        $ctx.Output('NewString') = $newString
+    }
+
+
+    ########################################################################################################
+    ###################     De- or Encode Base64 Files
+    ########################################################################################################
+    ##
+    if ($ctx.ConnectorName -eq 'Decode Encode Base64 File') {
+        # Captureing Input Parameters
+        $Source = $ctx.Input('Source')
+        $SourceIsBase64 = $ctx.Input('SourceIsBase64')
+        $SaveDestination = $ctx.Input('SaveDestination')
+
+        $HasError = $FALSE
+        $ErrorMessage = ""
+        $base64string = ""
+
+        Try {
+            if ($SourceIsBase64) {
+                if ($SaveDestination -eq '' -or $null -eq $SaveDestination) {
+                    $HasError = $TRUE
+                    $ErrorMessage = "Can not save Base64 String to File because there ist no path given."
+                }
+                else {
+                    [IO.File]::WriteAllBytes($SaveDestination, [Convert]::FromBase64String($Source))
+                }
+            }
+            else {
+                $base64string = [Convert]::ToBase64String([IO.File]::ReadAllBytes($Source))
+            }
+        }
+        Catch {
+            $HasError = $TRUE
+            $ErrorMessage = "Something went wrong and following error occured: $($_.Exception.Message)"
+        }
+
+        $ctx.Output('HasError') = $HasError
+        $ctx.Output('ErrorMessage') = $ErrorMessage
+        $ctx.Output('Base64String') = $base64string
+    }
+
+    ]]>
+    </script>
+    <connectors>
+        <connector name="Create LogEntry" description="Create LogEntry" guid="5e73dbb7-ffda-4e27-bdf2-e5960d5036a5">
+            <input>
+                <inputParameter name="ProcID" type="String" isArray="false" description="Proc.ID (mandatory)" optional="false" priority="1"/>
+                <inputParameter name="LogMessage" type="String" isArray="false" description="Logmessage (mandatory)" optional="false" priority="2"/>
+                <inputParameter name="SaveLocation" type="String" isArray="false" description="SaveLocation (optional)" optional="true" priority="3"/>
+                <inputParameter name="FileName" type="String" isArray="false" description="FileName (optional)" optional="true" priority="4"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+            </output>
+        </connector>
+        <connector name="Interface Call" description="Make a Interface Call in an other system (REST or SOAP)" guid="5e1a9c31-88ab-45b7-9b3a-387f2d9ee142">
+            <input>
+                <inputParameter name="ProcID" type="String" isArray="false" description="Proc.ID (Optional)" optional="true" priority="1"/>
+                <inputParameter name="RestMethod" type="String" isArray="false" description="RestMethod (mandatory)" optional="false" priority="2"/>
+                <inputParameter name="DestinationURI" type="String" isArray="false" description="DestinationURI (mandatory)" optional="false" priority="3"/>
+                <inputParameter name="Header" type="String" isArray="false" description="Header (optional)" optional="true" priority="4"/>
+                <inputParameter name="Body" type="String" isArray="false" description="Body (optional)" optional="true" priority="5"/>
+                <inputParameter name="AuthMethod" type="String" isArray="false" description="AuthMethod (optional)" optional="true" priority="6"/>
+                <inputParameter name="Username" type="String" isArray="false" description="Username (optional)" optional="true" priority="7"/>
+                <inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="8"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="ResponseContent" type="String" isArray="False" description="ResponseContent"/>
+                <outputParameter name="ResponseCode" type="LongInt" isArray="False" description="ResponseCode"/>
+            </output>
+        </connector>
+        <connector name="Decrypt HMAC" description="Decrypt HMAC with given algorithm" guid="7f058fd7-62a1-42e8-814f-f9f247a7899a">
+            <input>
+                <inputParameter name="ProcID" type="String" isArray="false" description="Proc.ID (Optional)" optional="true" priority="1"/>
+                <inputParameter name="HMACToken" type="String" isArray="false" description="HMACToken (mandatory)" optional="false" priority="2"/>
+                <inputParameter name="EncryptedMessage" type="String" isArray="false" description="EncryptedMessage (mandatory)" optional="false" priority="3"/>
+                <inputParameter name="Algorithm" type="String" isArray="false" description="Algorithm can be: MD5, SHA1, SHA256, SHA384, SHA512 (optional)" optional="true" priority="4"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="Signature" type="String" isArray="False" description="Signature"/>
+            </output>
+        </connector>
+        <connector name="Decode Encode Base64 String" description="Decode or encode Strings from Base64 or backwards" guid="c4c4cc8f-f948-404f-8aaa-ac3a7082d931">
+            <input>
+                <inputParameter name="SourceString" type="String" isArray="false" description="Source String to de- or encode (mandatory)" optional="false" priority="1"/>
+                <inputParameter name="EncodingType" type="String" isArray="false" description="UTF-8 or ASCII encoding (mandatory)" optional="false" priority="2"/>
+                <inputParameter name="SourceIsBase64" type="Boolean" isArray="false" description="Boolean if Source String is Base64 string (mandatory)" optional="false" priority="3"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="NewString" type="String" isArray="False" description="De- or encoded new String"/>
+            </output>
+        </connector>
+        <connector name="Decode Encode Base64 File" description="Decode or encode Strings from Base64 or backwards" guid="f7802c92-83e5-49c5-9f88-776ffe64c479">
+            <input>
+                <inputParameter name="Source" type="String" isArray="false" description="Source String or Source Path to file (mandatory)" optional="false" priority="1"/>
+                <inputParameter name="SaveDestination" type="String" isArray="false" description="Needed if decode base64 to file. Example: C:\filename.pdf (optional)" optional="true" priority="2"/>
+                <inputParameter name="SourceIsBase64" type="Boolean" isArray="false" description="Boolean if Source String is Base64 string or path to file (mandatory)" optional="false" priority="3"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="Base64String" type="String" isArray="False" description="Only filled if source was a file"/>
+            </output>
+        </connector>
+    </connectors>
+</connectorPackage>
