@@ -12,11 +12,11 @@ This connector package is valid for the third-party-system "Exchange Server"
 2.2 exchange_server.otconn
 
 - PowerShell Version 5.1
-- Exchange Server Module xxx
+- Exchange Server Module
 - Version 1: Initial version of OMNINET
 
 - Connectors of this connector package:
-  -  Add new mailbox
+  - Add new mailbox
   - Delete mailbox
   - Add distribution mail group
   - Delete distribution mail group
