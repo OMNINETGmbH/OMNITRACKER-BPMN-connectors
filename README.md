@@ -7,7 +7,7 @@ Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this pl
 
 ### 1.1 Structure of this repository
 
-We've devided our connector packages into different **directories**. Each directory stands for a third-party-tool. e.g. one directory with a connector package for MS Teams. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
+We've devided our connector packages into different **directories**. Each directory stands for a third-party-tool, e.g. one directory with a connector package for MS Teams. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
 
 We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download and reuse to create new directories.
 
@@ -25,7 +25,7 @@ If you want to update an existing connector package, please replace the existing
 
 1.2.2b *If there is no existing connector package, create and add a new one (New connector package)* 
 
-If you want you can use the sceleton directory and / or the *Template Generator BPMN process* (minimum OT version 12.1.100 required) to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules).
+If you want you can use the sceleton directory and / or the *Template Generator BPMN process* (minimum OMNITRACKER version 12.1.100 required) to create a new .otconn file. Otherwise you can also start from scratch to create the .otconn file (see 1.5 for detailled description and rules).
 
 
 1.2.3 *Commit a pull request*
@@ -34,7 +34,7 @@ You can commit a pull request to add new connector packages or update an existin
 
 1.2.4 *OMNINET will check the structure of the containing files within the pull request*
 
-OMNINET will **not automatically test** each connector; we will only check the syntax of the .otconn files and README.md which are pulled from users outside of OMNINET.
+OMNINET will **not automatically test** each connector within the connector packages of your pull request; we will only check the syntax of the .otconn files and README.md which are pulled from users outside of OMNINET.
 
 
 ### 1.3 Check existing connector packages
@@ -46,8 +46,8 @@ OMNINET will **not automatically test** each connector; we will only check the s
 
 
 ### 1.4 Rules for versioning an existing connector package
-- Use the existing connector package and copy it; the name of the .otconn file is then "Name_ConsecutiveNumber.otconn"
-- Within the new file you can add new connectors to the connector package
+- Use the existing connector package
+- Within the file you can add new connectors to the connector package or also adapt existing connectors
 - Also modify the README.md of this directory:
     - Adapt the information about PowerShell, the used Module(s), valid from, version 
     - Adapt the connectors of the connector package:
@@ -57,14 +57,14 @@ OMNINET will **not automatically test** each connector; we will only check the s
 
 
 ### 1.5 Rules for adding a new connector package
-- Add a new folder with the name of the third-party system 
-- Add a new README.md file into the folder with the basic information about the connector package
+- Add a new directory with the name of the third-party system or added features, if there is no specific third-party system involved
+- Add a new README.md file into the directory with the basic information about the connector package
     - PowerShell Module
     - Valid from
     - PowerShell Version
     - Version: Count +1 
-    - Connectors of the coneector package: add each connector with a short description
-- Add a new .otconn file (information about the format see 2.2); please note: you need to add new GuIDs within the connector package
+    - Connectors of the connector package: add each connector with a short description
+- Add the new .otconn file (information about the format see 2.2); please note: you need to add new GUIDs within the connector package
 
 
 
