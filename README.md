@@ -7,7 +7,7 @@ Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this pl
 
 ### 1.1 Structure of this repository
 
-We've devided our connector packages into different **directories**. Each directory stands for a third-party-tool, e.g. one directory with a connector package for MS Teams. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
+We've divided our connector packages into different **directories**. Each directory stands for a third-party-tool, e.g. one directory with a connector package for MS Teams. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
 
 We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download and reuse to create new directories.
 
