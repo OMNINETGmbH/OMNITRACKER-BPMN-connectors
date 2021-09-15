@@ -82,7 +82,7 @@
                     $Priority++
                 }
                 else {
-                    $ConnectorOutputs += "`$$($Variable.strName) = `$ctx.Output('$($Variable.strName)')
+                    $ConnectorOutputs += "`$ctx.Output('$($Variable.strName)') = `$$($Variable.strName)
                     "
 
                     $ConnectorFooterOutputs += "<outputParameter name=`"$($Variable.strName)`" type=`"$($Variable.strVariableType)`" isArray=`"$($Variable.bolArray)`" description=`"$($Variable.strName)`"/>
