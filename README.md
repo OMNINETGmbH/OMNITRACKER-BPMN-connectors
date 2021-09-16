@@ -131,14 +131,14 @@ An .otconn file is an XML file with the following format:
 </connectorPackage>
 ```
 
-Please note: pkgguid = Unique ID ("GUID") of the connector package, such as "{6191ab8b-6123-4273-8e5d-d86aead1538c}". You must generate a new GUID for each .otconn file you write; otherwise, this will cause problems when you have installed multiple connectors with the same GUID.
+Please note: pkgguid = Unique ID ("GUID") of the connector package, such as `{6191ab8b-6123-4273-8e5d-d86aead1538c}`. You must generate a new GUID for each .otconn file you write; otherwise, this will cause problems when you have installed multiple connectors with the same GUID.
 
 ### 2.3 Connector Script Object Model
-Connector scripts can use following global properties and methods. In PowerShell, you need to prefix the property or method names with "$ctx.", e.g. use $ctx.Input('parameter1') whereas you would use Input("parameter1") in VBScript. 
+Connector scripts can use following global properties and methods. In PowerShell, you need to prefix the property or method names with `$ctx.`, e.g. use `$ctx.Input('parameter1')` whereas you would use `Input("parameter1")` in VBScript. 
 
 *Properties*:
 - ConnectorName: Returns the name of the connector for which the script currently is executed. All connectors of the package execute the same script; therefore it is necessary to check ConnectorName if your connector package contains more than one connector.
-- Input(name): Returns the value of the connector input parameter with the given name. In order to check whether an optional input parameter has a value in VBScript, use IsNull(Input("name")); it will return False if the parameter has a value. In PowerShell, use "$ctx.Input('name') -eq $null".
+- Input(name): Returns the value of the connector input parameter with the given name. In order to check whether an optional input parameter has a value in VBScript, use `IsNull(Input("name"))`; it will return False if the parameter has a value. In PowerShell, use `$ctx.Input('name') -eq $null`.
 - Output(name): Gets or sets the value of the connector output parameter with the given name.
 
 *Methods*:
