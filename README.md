@@ -9,7 +9,7 @@ Welcome to our exchange platform for OMNITRACKER BPMN connectors. Within this pl
 
 We've divided our connector packages into different **directories**. Each directory stands for a third-party-tool, e.g. one directory with a connector package for MS Teams. You can either check existing connector packages, update them or add complete new connector packages to the repository. If you update or add new connector packages, your files need to follow some rules, which you can find next.
 
-We've also added one directory called **sceleton**. This contains an empty connector package and a preconfigured README.md file, which you can download and reuse to create new directories.
+We've also added one directory called **skeleton**. This contains an empty connector package and a preconfigured README.md file, which you can download and reuse to create new directories.
 
 Within the directory **otconn template generator** you can find a connector package and also a .bpmn file which you can use to configure new .otconn files. The bpmn file contains a BPMN diagram, which allows you to configure a connector package. You can find a detailed description within the README.md within the directory.
 
