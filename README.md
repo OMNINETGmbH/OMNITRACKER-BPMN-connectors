@@ -81,7 +81,55 @@ Connectors can be implemented in one of the following programming languages:
 ### 2.2 .otconn File Format
 An .otconn file is an XML file with the following format:
 
-![grafik](https://user-images.githubusercontent.com/61735509/121145278-1245ef00-c83f-11eb-9aef-5511df2ee493.png)
+```xml
+<?xml version="1.0" encoding="encoding"?>
+<connectorPackage guid="pkgguid" category="category" language="language">
+  <script>
+    <![CDATA[script]]>
+  </script>
+  <structures>
+    <structure name="structname">
+      <members>
+        <member name="membername" isArray="isArray" type="conntype" />
+        <member ... />
+        <member ... />
+        ...
+        <member ... />
+      </members>
+    </structure>
+    <structure>...</structure>
+    <structure>...</structure>
+    ...
+    <structure>...</structure>
+  </structures>
+  <connectors>
+    <connector name="connname" description="conndescription" guid="connguid">
+      <input>
+        <inputParameter name="parname" type="partype" isArray="isArray" group="group" description="description" optional="optional"/>
+        <inputParameter ... />
+        ...
+        <inputParameter ... />
+      </input>
+      <output>
+        <outputParameter name="parname" type="partype" isArray="isArray" group="group" description="description"/>
+        <outputParameter ... />
+        ...
+        <outputParameter ... />
+      </output>
+    </connector>
+    <connector ...>
+        ... second connector ...
+    </connector>
+    <connector ...>
+        ... third connector ...
+    </connector>
+    ...
+    <connector ...>
+        ... last connector ...
+    </connector>
+  </connectors>
+</connectorPackage>
+```
 
 Please note: pkgguid = Unique ID ("GUID") of the connector package, such as "{6191ab8b-6123-4273-8e5d-d86aead1538c}". You must generate a new GUID for each .otconn file you write; otherwise, this will cause problems when you have installed multiple connectors with the same GUID.
 
