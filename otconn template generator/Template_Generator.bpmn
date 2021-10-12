@@ -378,7 +378,7 @@ DataOutput("strucOutNewConnectorVariables") = strucConnectorVariables</sem:scrip
 		</sem:serviceTask>
 		<sem:userTask id="_74" name="Variablen definieren" ot:displayName="{_6}" ot:alias="DefineVariables">
 			<sem:extensionElements>
-				<ot:userTaskDefinition title="Translate(&quot;Dict.Entry_DefineVariables&quot;)" description="Translate(&quot;Dict.Entry_PleaseDefineVariables&quot;)" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="Translate(&quot;Dict.Entry_DefineVariables&quot;)" otObject="">
+				<ot:userTaskDefinition title="Translate(&quot;Dict.Entry_DefineVariables&quot;)" description="Translate(&quot;Dict.Entry_PleaseDefineVariables&quot;)" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="Translate(&quot;Dict.Entry_DefineVariables&quot;)" otObject="" isAbortable="true">
 					<ot:staticText text="If intLoopCounter &lt; intAmountIn Then Translate(&quot;Dict.Entry_InsertInput&quot;) &amp; &quot; &quot; &amp; CStr(intLoopCounter + 1) &amp; &quot;/&quot; &amp; intAmountIn Else Translate(&quot;Dict.Entry_InsertOutput&quot;) &amp; &quot; &quot; &amp; CStr(intLoopCounter - intAmountIn + 1) &amp; &quot;/&quot; &amp; intAmountOut" displayAsStrongText="false"/>
 					<ot:staticText text="Translate(&quot;Dict.Entry_SupportedVariabletypes&quot;)" displayAsStrongText="false"/>
 					<ot:dataElement displayName="{_27}" variable="_46" mandatory="true"/>
@@ -391,7 +391,7 @@ DataOutput("strucOutNewConnectorVariables") = strucConnectorVariables</sem:scrip
 		</sem:userTask>
 		<sem:userTask id="_63" name="Konnektorpaket definieren" ot:displayName="{_8}" ot:alias="InputConnectorParameters">
 			<sem:extensionElements>
-				<ot:userTaskDefinition title="Translate(&quot;Dict.Entry_InputConnectorParameters&quot;)" description="Translate(&quot;Dict.Entry_SelectInputParameters&quot;)" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="Translate(&quot;Dict.Entry_InputConnectorParameters&quot;)" otObject="">
+				<ot:userTaskDefinition title="Translate(&quot;Dict.Entry_InputConnectorParameters&quot;)" description="Translate(&quot;Dict.Entry_SelectInputParameters&quot;)" dueDate="now" responsible="" alsoVisibleFor="" objectBased="false" formType="dynamic" formTitle="Translate(&quot;Dict.Entry_InputConnectorParameters&quot;)" otObject="" isAbortable="true">
 					<ot:staticText text="Translate(&quot;Dict.Entry_FirstDefineImportantParameters&quot;)" displayAsStrongText="false"/>
 					<ot:staticText text="Translate(&quot;Dict.Entry_AmountOfParameters&quot;)" displayAsStrongText="false"/>
 					<ot:dataElement displayName="{_11}" variable="_52" mandatory="true"/>
