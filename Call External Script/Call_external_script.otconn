@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?><connectorPackage guid="{8c8f1f43-4df4-45c3-85fc-61e861cfc00a}" category="Call external script" language="PowerShell">
+                <script>
+                <![CDATA[
+            ###################     Call Python Script
+            ###################     Generated via the Omnitracker Connector Template Generator
+
+            if ($ctx.ConnectorName -eq 'Call Python Script') {
+                # Input Parameters		
+                $DirPath = $ctx.Input('ScriptDirPath')
+				$ScriptFileName = $ctx.Input('ScriptFileName')
+				$ScriptParameters = $ctx.Input('ScriptParameters')
+				
+				$HasError = $false
+                $ErrorMessage = ""
+				
+                Try {
+                    # Call python script					
+					$MyOutput = New-Object PSObject
+					$PythonScript = Join-Path -Path $DirPath -ChildPath $ScriptFileName
+					$MyOutput = Invoke-Command -ScriptBlock {python $PythonScript $ScriptParameters} -OutVariable MyOutput
+					
+					# always interpret as array even if there is one element					
+                    $ctx.Output('ScriptOutputArr') = @($MyOutput)
+					$ctx.Output('strOut') = $MyOutput
+                }
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+                }
+				$ctx.Output('HasError') = $HasError
+                $ctx.Output('ErrorMessage') = $ErrorMessage
+                
+                    
+            }
+            ]]>
+            </script>
+            <connectors>
+            <connector name="Call Python Script" description="Call Python Script" guid="c178ac35-5e12-4ba3-8c4b-95c938060a75">
+                <input>
+					<inputParameter name="ScriptDirPath" type="String" isArray="False" description="ScriptDirPath" priority="1"/>
+                    <inputParameter name="ScriptFileName" type="String" isArray="False" description="ScriptFileName" priority="2"/>
+                    <inputParameter name="ScriptParameters" type="String" isArray="True" description="ScriptParameters" priority="3"/>
+                </input>
+                <output>
+					<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+					<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+					<outputParameter name="ScriptOutputArr" type="String" isArray="True" description="ScriptOutputArr"/>
+                </output>
+                </connector>
+            </connectors>
+            </connectorPackage>
