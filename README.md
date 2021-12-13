@@ -74,9 +74,13 @@ OMNINET will **not automatically test** each connector within the connector pack
     - Service task
     - Sequence flows
     - Error handling with boundary error event or gateway
+  - Here you can see an example for such an diagram:
+  
+   ![bpmn diagram](https://user-images.githubusercontent.com/85875885/145818685-ab126e6d-5f5c-4f35-8d92-01ec5a39ee57.png)
+
 - Optional: Add a .xop file which contains the necessary schema objects (like folders, fields) for the BPMN diagram you want to share
- - Please only include the really needed schema objects for this particular process
- - The schema objects should not be part of an standard application within OMNITRACKER. Instead they should be auxiliary objects, e.g. in an extra folder within OMNITRACKER
+  - Please only include the really needed schema objects for this particular process
+  - The schema objects should not be part of an standard application within OMNITRACKER. Instead they should be auxiliary objects, e.g. in an extra folder within OMNITRACKER
 
 ## 2. OMNITRACKER BPMN
 
