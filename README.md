@@ -60,7 +60,23 @@ OMNINET will **not automatically test** each connector within the connector pack
   - PowerShell Version
   - Version: Count +1
   - Connectors of the connector package: add each connector with a short description
+  - Optional:
+    - Information about the .bpmn file (image, description, minimum version of OMNITRACKER required, called connector, required schema objects)
+    - Information about the .xop file (description, minimum version of OMNITRACKER required)
 - Add the new .otconn file (information about the format see 2.2); please note: you need to add new GUIDs within the connector package
+- Optional: Add a .bpmn file with a small diagram for easy testing of the connector
+  - The BPMN diagram has to be at most an executable process to call the connector
+  - Therefore, we will only allow the following BPMN elements to be part of the BPMN diagram
+    - Pool with data objects and properties
+    - Lane
+    - Data Input / Data Output objects
+    - Start / end event
+    - Service task
+    - Sequence flows
+    - Error handling with boundary error event or gateway
+- Optional: Add a .xop file which contains the necessary schema objects (like folders, fields) for the BPMN diagram you want to share
+ - Please only include the really needed schema objects for this particular process
+ - The schema objects should not be part of an standard application within OMNITRACKER. Instead they should be auxiliary objects, e.g. in an extra folder within OMNITRACKER
 
 ## 2. OMNITRACKER BPMN
 
