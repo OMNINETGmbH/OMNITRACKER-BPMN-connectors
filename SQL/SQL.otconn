@@ -1,139 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
-<connectorPackage guid="{3f0be99b-c79a-4608-aec9-3dff6c8ece3a}" category="SQL" language="PowerShell">
-    <script>
+<connectorPackage guid="{3f0be99b-c79a-4608-aec9-3dff6c8ece3a}" category="SQL Tools" language="PowerShell">
+<script>
 
-    <![CDATA[
-    ########################################################################################################
-    ###################     CAUTION: 
-    ###################     This connector package needs the "SqlServer" Module from PSGallery
-    ########################################################################################################
+<![CDATA[
+########################################################################################################
+###################     CAUTION: 
+###################     This connector package needs the "SqlServer" Module from PSGallery
+########################################################################################################
 
 
-
-    ########################################################################################################
-    ###################     Send SQL Query no Returnvalue (e.g.: Insert querys): 
-    ########################################################################################################
-    
-    if ($ctx.ConnectorName -eq 'Send SQL Query no Returnvalue') {
-        # Input Parameters
-        $Hostaddress = $ctx.Input('Hostaddress')
-        $SqlQuery = $ctx.Input('SqlQuery')
-        $Database = $ctx.Input('Database')
-        $User = $ctx.Input('User')
-        $Password = $ctx.Input('Password')
+########################################################################################################
+###################     Send SQL Query no Returnvalue (e.g.: Insert querys): 
+########################################################################################################
+##
+if ($ctx.ConnectorName -eq 'Send SQL Query no Returnvalue') {
+    # Captureing Input Parameters
+    $Hostaddress = $ctx.Input('Hostaddress')
+    $SqlQuery = $ctx.Input('SqlQuery')
+    $Database = $ctx.Input('Database')
+    $User = $ctx.Input('User')
+    $Password = $ctx.Input('Password')
         
-        $HasError = $FALSE
-        $ErrorMessage = ""
+    $HasError = $FALSE
+    $ErrorMessage = ""
 
-        Try {
-            Import-Module SqlServer
-            if (($User) -and ($Password)) {
-                Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery -Username $User -Password $Password
-            }
-            else {
-                Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery
-            }
+    Try {
+        if (($User) -and ($Password)) {
+            Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery -Username $User -Password $Password
         }
-        Catch {
-            $HasError = $TRUE
-            $ErrorMessage = $_.Exception.Message
+        else {
+            Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery
         }
-
-        $ctx.Output('HasError') = $HasError
-        $ctx.Output('ErrorMessage') = $ErrorMessage
+    }
+    Catch {
+        $HasError = $TRUE
+        $ErrorMessage = $_.Exception.Message
     }
 
-    ########################################################################################################
-    ###################     Send SQL Query with Returnvalue (e.g.: Select querys): 
-    ########################################################################################################
-    
-    if ($ctx.ConnectorName -eq 'Send SQL Query with Returnvalue') {
-        # Input Parameters
-        $Hostaddress = $ctx.Input('Hostaddress')
-        $SqlQuery = $ctx.Input('SqlQuery')
-        $Database = $ctx.Input('Database')
-        $User = $ctx.Input('User')
-        $Password = $ctx.Input('Password')
-        
-        $HasError = $FALSE
-        $ErrorMessage = ""
-        
-        Try {
-            Import-Module SqlServer
-            if (($User) -and ($Password)) {
-                $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery -Username $User -Password $Password | Out-String
-            }
-            else {
-                $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery | Out-String
-            }
-        }
-        Catch {
-            $HasError = $TRUE
-            $ErrorMessage = $_.Exception.Message
-        }
+    $ctx.Output('HasError') = $HasError
+    $ctx.Output('ErrorMessage') = $ErrorMessage
+}
 
-        $ctx.Output('HasError') = $HasError
-        $ctx.Output('ErrorMessage') = $ErrorMessage
-        $ctx.Output('SQLResult') = $SQLResult
+########################################################################################################
+###################     Send SQL Query no Returnvalue x86 (e.g.: Insert querys): 
+########################################################################################################
+##
+if ($ctx.ConnectorName -eq 'Send SQL Query no Returnvalue x86') {
+    # Captureing Input Parameters
+    $Hostaddress = $ctx.Input('Hostaddress')
+    $SqlQuery = $ctx.Input('SqlQuery')
+    $Database = $ctx.Input('Database')
+    $User = $ctx.Input('User')
+    $Password = $ctx.Input('Password')
+        
+    $HasError = $FALSE
+    $ErrorMessage = ""
+
+    Try {
+        $Connection = New-Object System.Data.SQLClient.SQLConnection
+        $Connection.ConnectionString = "server='$Hostaddress';database='$Database';trusted_connection=false; integrated security='true'"
+        $Connection.Open()
+        $command = $Connection.CreateCommand()
+        $command.CommandText = $SqlQuery
+        $command.ExecuteReader()
+    }
+    Catch {
+        $HasError = $TRUE
+        $ErrorMessage = $_.Exception.Message
     }
 
-    ########################################################################################################
-    ###################     Send SQL Query save as CSV (e.g.: Select querys with a realy large result):
-    ########################################################################################################
-    
-    if ($ctx.ConnectorName -eq 'Send SQL Query save as CSV') {
-        # Input Parameters
-        $Hostaddress = $ctx.Input('Hostaddress')
-        $SqlQuery = $ctx.Input('SqlQuery')
-        $Database = $ctx.Input('Database')
-        $User = $ctx.Input('User')
-        $Password = $ctx.Input('Password')
+    $ctx.Output('HasError') = $HasError
+    $ctx.Output('ErrorMessage') = $ErrorMessage
+}
 
-        $Location = $ctx.Input('SaveLocation')
-        if (-Not $Location) {
-            $Location = "C:\OmnitrackerSQLQuery\"
-        }
-
-        $FileName = $ctx.Input('FileName')
-        if ($FileName) {
-            $FileName -replace ".txt", ""
-            $FileName -replace ".csv", ""
-        } else {
-            $FileName = "sql_query"
-        }
+########################################################################################################
+###################     Send SQL Query with Returnvalue (e.g.: Select querys): 
+########################################################################################################
+##
+if ($ctx.ConnectorName -eq 'Send SQL Query with Returnvalue') {
+    # Captureing Input Parameters
+    $Hostaddress = $ctx.Input('Hostaddress')
+    $SqlQuery = $ctx.Input('SqlQuery')
+    $Database = $ctx.Input('Database')
+    $User = $ctx.Input('User')
+    $Password = $ctx.Input('Password')
         
-        $HasError = $FALSE
-        $ErrorMessage = ""
-        $dttime = Get-Date -Format yyyyMMddHHmmss
-
-
-        Try {
-            $FullPath = Join-Path -Path $Location -ChildPath "$($FileName)_$($dttime).csv"
-            if (-Not(Test-Path -Path $FullPath)) {New-Item -Path $FullPath -Force}
-
-
-            Import-Module SqlServer
-            if (($User) -and ($Password)) {
-                $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery -Username $User -Password $Password | Export-Csv $FullPath -Delimiter ";" -NoTypeInformation -Force
-            }
-            else {
-                $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery | Export-Csv $FullPath -Delimiter ";" -NoTypeInformation -Force
-            }
+    $HasError = $FALSE
+    $ErrorMessage = ""
+        
+    Try {
+        if (($User) -and ($Password)) {
+            $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery -Username $User -Password $Password
         }
-        Catch {
-            $HasError = $TRUE
-            $ErrorMessage = $_.Exception.Message
+        else {
+            $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery
         }
-
-        $ctx.Output('HasError') = $HasError
-        $ctx.Output('ErrorMessage') = $ErrorMessage
-        $ctx.Output('FullSaveLocation') = $FullPath
     }
-    ########################################################################################################
+    Catch {
+        $HasError = $TRUE
+        $ErrorMessage = $_.Exception.Message
+    }
+    $SQLResult | Out-String
+    $SQLString = $SQLResult[0]
+    $ctx.Output('HasError') = $HasError
+    $ctx.Output('ErrorMessage') = $ErrorMessage
+    $ctx.Output('SQLResult') = $SQLString
+}
+	
+########################################################################################################
+###################     Send SQL Query with column (e.g.: Select querys): 
+########################################################################################################
+##
+if ($ctx.ConnectorName -eq 'Send SQL Query with column') {
+    # Captureing Input Parameters
+    $Hostaddress = $ctx.Input('Hostaddress')
+    $SqlQuery = $ctx.Input('SqlQuery')
+    $Database = $ctx.Input('Database')
+    $Column = $ctx.Input('Column')
+    $User = $ctx.Input('User')
+    $Password = $ctx.Input('Password')
+        
+    $HasError = $FALSE
+    $ErrorMessage = ""
+        
+    Try {
+        $Connection = New-Object System.Data.SQLClient.SQLConnection
+        $Connection.ConnectionString = "server='$Hostaddress';database='$Database';trusted_connection=false; integrated security='true'"
+        $Connection.Open()
+        $command = $Connection.CreateCommand()
+        $command.CommandText = $SqlQuery
+        $Datatable = New-Object "System.Data.Datatable"
+        $result = $command.ExecuteReader()
+        $Datatable.Load($result)
+        $Result = $Datatable
+    }
+    Catch {
+        $HasError = $TRUE
+        $ErrorMessage = $_.Exception.Message
+    }
+
+    $SQLString = $Result.$Column
+    $ctx.Output('HasError') = $HasError
+    $ctx.Output('ErrorMessage') = $ErrorMessage
+    $ctx.Output('SQLResult') = $SQLString
+}
+
+########################################################################################################
+###################     Send SQL Query save as CSV (e.g.: Select querys with a realy large result):
+########################################################################################################
+##
+if ($ctx.ConnectorName -eq 'Send SQL Query save as CSV') {
+    # Captureing Input Parameters
+    $Hostaddress = $ctx.Input('Hostaddress')
+    $SqlQuery = $ctx.Input('SqlQuery')
+    $Database = $ctx.Input('Database')
+    $User = $ctx.Input('User')
+    $Password = $ctx.Input('Password')
+
+    $Location = $ctx.Input('SaveLocation')
+    if (-Not $Location) {
+        $Location = "C:\OmnitrackerSQLQuery\"
+    }
+
+    $FileName = $ctx.Input('FileName')
+    if ($FileName) {
+        $FileName -replace ".txt", ""
+        $FileName -replace ".csv", ""
+    }
+    else {
+        $FileName = "sql_query"
+    }
+        
+    $HasError = $FALSE
+    $ErrorMessage = ""
+    $dttime = Get-Date -Format yyyyMMddHHmmss
+
+
+    Try {
+        $FullPath = Join-Path -Path $Location -ChildPath "$($FileName)_$($dttime).csv"
+        if (-Not(Test-Path -Path $FullPath)) { New-Item -Path $FullPath -Force }
+
+
+        Import-Module SqlServer
+        if (($User) -and ($Password)) {
+            $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery -Username $User -Password $Password | Export-Csv $FullPath -Delimiter ";" -NoTypeInformation -Force
+        }
+        else {
+            $SQLResult = Invoke-Sqlcmd -ServerInstance $Hostaddress -Database $Database -Query $SqlQuery | Export-Csv $FullPath -Delimiter ";" -NoTypeInformation -Force
+        }
+    }
+    Catch {
+        $HasError = $TRUE
+        $ErrorMessage = $_.Exception.Message
+    }
+
+    $ctx.Output('HasError') = $HasError
+    $ctx.Output('ErrorMessage') = $ErrorMessage
+    $ctx.Output('FullSaveLocation') = $FullPath
+}
+
+########################################################################################################
     ###################     Backup an SQL Server database using PowerShell in default Path: 
     ########################################################################################################
 	
-	if ($ctx.ConnectorName -eq 'Backup Database') {
+if ($ctx.ConnectorName -eq 'Backup Database') {
         # Input Parameters
 
         $Database = $ctx.Input('Database')
@@ -153,55 +223,82 @@
 		$ctx.Output('HasError') = $HasError
         $ctx.Output('ErrorMessage') = $ErrorMessage    
     }
-      
 
-    ]]>
-    </script>
-    <connectors>
-        <connector name="Send SQL Query no Returnvalue" description="Execute SQL Query with no returnvalue of the Query sended back" guid="08ca17be-4ffe-40bb-9b6b-0c67fbcb7e56">
-            <input>
-                <inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
-                <inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
-                <inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
-                <inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="4"/>
-                <inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="5"/>
-            </input>
-            <output>
-                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
-                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
-            </output>
-        </connector>
-        <connector name="Send SQL Query with Returnvalue" description="Execute SQL Query with with a returnvalue sended back. You have to handle the Response yourself." guid="e3cf863c-9eef-4368-9768-39b6da3e166a">
-            <input>
-                <inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
-                <inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
-                <inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
-                <inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="4"/>
-                <inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="5"/>
-            </input>
-            <output>
-                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
-                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
-                <outputParameter name="SQLResult" type="String" isArray="False" description="Return value of the SQL Server"/>
-            </output>
-        </connector>
-        <connector name="Send SQL Query save as CSV" description="Execute SQL Query and save the result to a CSV File" guid="96a3db6f-5d53-43c1-855a-10b9cf98d4bf">
-            <input>
-                <inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
-                <inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
-                <inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
-                <inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="4"/>
-                <inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="5"/>
-                <inputParameter name="SaveLocation" type="String" isArray="false" description="SaveLocation (optional)" optional="true" priority="6"/>
-                <inputParameter name="FileName" type="String" isArray="false" description="FileName (optional)" optional="true" priority="7"/>
-            </input>
-            <output>
-                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
-                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
-                <outputParameter name="FullSaveLocation" type="String" isArray="False" description="Location where the file has been saved"/>
-            </output>
-        </connector>
-        <connector name="Backup Database" description="Backup Database" guid="cb5617fa-0e13-42de-9782-cf3b87a8c988">
+]]>
+</script>
+<connectors>
+<connector name="Send SQL Query no Returnvalue" description="Execute SQL Query with no returnvalue of the Query send back" guid="08ca17be-4ffe-40bb-9b6b-0c67fbcb7e56">
+<input>
+<inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
+<inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
+<inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
+<inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="4"/>
+<inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="5"/>
+</input>
+<output>
+<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+</output>
+</connector>
+<connector name="Send SQL Query no Returnvalue x86" description="Execute SQL Query with no returnvalue in x86 environment" guid="08ca17be-4ffe-40bb-9b6b-0c67fbcb7e57">
+<input>
+<inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
+<inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
+<inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
+<inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="4"/>
+<inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="5"/>
+</input>
+<output>
+<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+</output>
+</connector>
+<connector name="Send SQL Query with Returnvalue" description="Execute SQL Query with a returnvalue send back. You have to handle the Response yourself." guid="e3cf863c-9eef-4368-9768-39b6da3e166a">
+<input>
+<inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
+<inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
+<inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
+<inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="4"/>
+<inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="5"/>
+</input>
+<output>
+<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+<outputParameter name="SQLResult" type="String" isArray="False" description="Return value of the SQL Server"/>
+</output>
+</connector>
+<connector name="Send SQL Query with column" description="Execute SQL Query with a returnvalue send back. You need to specify a column." guid="e3cf863c-9eef-4368-9768-39b6da3e176a">
+<input>
+<inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
+<inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
+<inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
+<inputParameter name="Column" type="String" isArray="false" description="String (mandatory)" optional="false" priority="4"/>
+<inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="5"/>
+<inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="6"/>
+</input>
+<output>
+<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+<outputParameter name="SQLResult" type="String" isArray="False" description="Return value of the SQL Server"/>
+</output>
+</connector>
+<connector name="Send SQL Query save as CSV" description="Execute SQL Query and save the result to a CSV File" guid="96a3db6f-5d53-43c1-855a-10b9cf98d4bf">
+<input>
+<inputParameter name="Hostaddress" type="String" isArray="false" description="Hostaddress (mandatory)" optional="false" priority="1"/>
+<inputParameter name="SqlQuery" type="String" isArray="false" description="SqlQuery (mandatory)" optional="false" priority="2"/>
+<inputParameter name="Database" type="String" isArray="false" description="Database (mandatory)" optional="false" priority="3"/>
+<inputParameter name="User" type="String" isArray="false" description="User (optional)" optional="true" priority="4"/>
+<inputParameter name="Password" type="String" isArray="false" description="Password (optional)" optional="true" priority="5"/>
+<inputParameter name="SaveLocation" type="String" isArray="false" description="SaveLocation (optional)" optional="true" priority="6"/>
+<inputParameter name="FileName" type="String" isArray="false" description="FileName (optional)" optional="true" priority="7"/>
+</input>
+<output>
+<outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+<outputParameter name="FullSaveLocation" type="String" isArray="False" description="Location where the file has been saved"/>
+</output>
+</connector>
+<connector name="Backup Database" description="Backup Database" guid="cb5617fa-0e13-42de-9782-cf3b87a8c988">
 			<input>
 				<inputParameter name="Database" type="String" isArray="False" description="Database Name" priority="1"/>
 				<inputParameter name="ServerInstance" type="String" isArray="False" description="Server Instance Name" priority="2"/>
@@ -211,5 +308,5 @@
 				<outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
            </output>
         </connector>
-    </connectors>
+</connectors>
 </connectorPackage>

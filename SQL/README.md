@@ -13,7 +13,9 @@ This connector package needs the "SqlServer" Module from PSGallery
 - Version 1: Initial version of OMNINET
 - Connectors of the connector package:
 	- Send SQL Query no Returnvalue
+	- Send SQL Query no Returnvalue x86
 	- Send SQL Query with Returnvalue
+	- Send SQL Query with column
 	- Send SQL Query save as CSV
 	- Backup Database
 	
