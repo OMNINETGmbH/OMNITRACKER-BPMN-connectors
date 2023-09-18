@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectorPackage guid="{ad496abf-2f01-4a7a-a33f-385262fef742}" category="GPT Integration" language="PowerShell">
+    <script>
+        <![CDATA[
+            if ($ctx.ConnectorName -eq 'GPTPrompt') {
+
+                $HasError = $false
+                $ErrorMessage = "No error occured"
+                $ApiKey = $ctx.Input('strApiKey')
+                $Prompt = $ctx.Input('strPrompt')
+                $ApiEndpoint = "https://api.openai.com/v1/chat/completions"
+                $arrConversation = $ctx.Input('arrConversation')
+
+
+                # check if array is empty or Null
+                if (([string]::IsNullOrWhiteSpace($arrConversation))) {
+                    $arrConversation = @()
+                }
+
+                # define first role "counter" value
+                $role = "system"
+                
+                Try {
+
+                    # Give context to the ai in order to get a proper answer
+                    $MessageContext = "You are a support chat assistant in a BPMN application"
+                    
+                    # add context if first message in conversation (-eq 1 because of "temp" value in array)
+                    if ($arrConversation.count -eq 1){
+                        # remove "temp" value and add context
+                        $arrConversation = @()
+                        $arrConversation += $MessageContext
+                    }
+                    
+                    # add current user input to array
+                    $arrConversation += $Prompt
+
+                    function Invoke-ChatGPT ($Prompt) {
+                        # List of Hashtables that will hold the system message and user message.
+                        [System.Collections.Generic.List[Hashtable]]$messages = @()
+                        
+                        foreach ($message in $arrConversation){
+                            # check for current role and add message to hashtable
+                            if ($role -eq "system"){
+                                $messages.Add(@{"role" = "system"; "content" = $message}) | Out-Null
+                                $role = "user"
+                            }
+
+                            elseif ($role -eq "user") {
+                                $messages.Add(@{"role" = "user"; "content" = $message}) | Out-Null
+                                $role = "system"
+                            }
+                        }
+                    
+                        # Set the request headers
+                        $headers = @{
+                        "Content-Type" = "application/json"
+                        "Authorization" = "Bearer $ApiKey"
+                        }   
+                    
+                        # Set the request body
+                        $requestBody = @{
+                            "model" = "gpt-3.5-turbo"
+                            "messages" = $messages
+                            "max_tokens" = 2000 # Max amount of tokens the AI will respond with
+                            "temperature" = 0.5 # lower is more coherent and conservative, higher is more creative and diverse.
+                        }
+                    
+                        # Send the request
+                        $response = Invoke-RestMethod -Method POST -Uri $ApiEndpoint -Headers $headers -Body (ConvertTo-Json $requestBody)
+                    
+                        # Return the message content
+                        return $response.choices[0].message.content
+                    }
+                    
+                    # Invoke ChatGPT and add response to conversation array
+                    $strResponse = Invoke-ChatGPT $Prompt
+                    $arrConversation += $strResponse
+
+                    $ctx.Output('strOutResponse') = $strResponse
+                    $ctx.Output('arrOutConversation') = $arrConversation
+                    $ctx.Output('boolOutHasError') = $HasError
+                    $ctx.Output('strOutErrorMessage') = $ErrorMessage
+                }
+            
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $ErrorMessage = "$($_.Exception.Message)"
+            
+                    $ctx.Output('boolOutHasError') = $HasError
+                    $ctx.Output('strOutErrorMessage') = $ErrorMessage
+                    $ctx.Output('arrOutConversation') = $arrConversation
+                }
+                
+            }          
+        ]]>
+    </script>
+    <connectors>
+        <connector name="GPTPrompt" description="GPTPrompt" guid="f9579cbc-1b8d-4fbd-b854-0b7b01e78f3b">
+            <input>
+                <inputParameter name="strApiKey" type="String" isArray="False" description="ApiKey" priority="1"/>
+                <inputParameter name="strPrompt" type="String" isArray="False" description="prompt" priority="2"/>
+                <inputParameter name="arrConversation" type="String" isArray="True" description="All messages in conversation" priority="3"/>
+            </input>
+            <output>
+                <outputParameter name="boolOutHasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="strOutErrorMessage" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="strOutResponse" type="String" isArray="False" description="GPT Response"/>
+                <outputParameter name="arrOutConversation" type="String" isArray="True" description="GPT Response"/>
+            </output>
+        </connector>
+    </connectors>
+</connectorPackage>

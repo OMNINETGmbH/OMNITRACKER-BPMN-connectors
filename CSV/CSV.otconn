@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connectorPackage guid="{5938cf62-44f9-4824-b91c-6793383a91f9}" category="CSV Import" language="PowerShell">
+    <script>
+        <![CDATA[
+            ###################     CSV Import
+            ###################     Generated via the Omnitracker Connector Template Generator
+            ###################     Creation timestamp: 20230718125911
+
+
+            if ($ctx.ConnectorName -eq 'CSV Import - specific row/all columns') {
+                # Capturing Parameters
+                $HasError = $FALSE
+                $ErrorMessage = "No error occurred"
+                $HasRow = $TRUE
+                $RowNumber = $ctx.Input('RowNumber')
+                $Path = $ctx.Input('Path')
+
+                Try {
+                    
+                    # choose appropriate csv delimiter !
+                    $ListOutput = Import-CSV -path $Path -delimiter ";"
+                    $ListLength = $ListOutput.Count -1
+                    $ColumnNames = "A,B,C,D"
+                    $ColumnNames = $ColumnNames.Split(",")
+
+                    # adapt Structure and method to the individual tabel
+                    if ( $RowNumber -le $ListLength )
+                    {
+                        # get specific row of table
+                        $Current = $ListOutput[$RowNumber]
+                        $StrucOutRow = $ctx.CreateStruct('StrucOutRow')
+
+                        # get values for each column in row
+                        foreach ($i in $ColumnNames)
+                        { 
+                            if ([string]::IsNullOrEmpty($Current.$i)-ne $TRUE)
+                            {
+                                $StrucOutRow.$i = $Current.$i
+                            }
+                            else 
+                            {
+                                $StrucOutRow.$i = ""
+                            }
+                        }
+
+                        $ctx.Output('strucStrucRowOut') = $StrucOutRow
+                    }
+                    else
+                    {
+                        $HasRow = $FALSE
+                    }
+
+                }
+
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $ErrorMessage = "Something went wrong while executing the script. Following error occured: $($_.Exception.Message) at line: $($_.InvocationInfo.ScriptLineNumber)"
+                }
+
+                $ctx.Output('strHasErrorOut') = $HasError
+                $ctx.Output('strErrorMessageOut') = $ErrorMessage
+                $ctx.Output('strHasRowOut') = $HasRow       
+            }
+
+
+            if ($ctx.ConnectorName -eq 'CSV Import - all rows/specifc column') {
+                # Capturing Parameters
+                $HasError = $FALSE
+                $ErrorMessage = "No error occurred"
+                $HasColumn = $TRUE
+                $ColumnName = $ctx.Input('ColumnName')
+                $Path = $ctx.Input('Path')
+
+                Try {
+
+                    # adapt Structure and method to the individual tabel
+                    # choose appropriate csv delimiter !
+                    $ListOutput = Import-CSV -path $Path -delimiter ";"
+
+                    $MemberNames = "A,B,C,D"
+                    $MemberNames = $MemberNames.Split(",")
+
+                    $RowIdxs = "0,1,2,3"
+                    $RowIdxs = $RowIdxs.Split(",")
+                    
+                    # get specific row of table
+                    $Current = $ListOutput.$ColumnName
+                    $StrucOutColumn = $ctx.CreateStruct('StrucOutColumn')
+
+                    # get values for each column in row
+                    foreach ($i in $RowIdxs)
+                    { 
+                        if ([string]::IsNullOrEmpty($Current[$i])-ne $TRUE)
+                        {
+                            $StrucOutColumn.@($MemberNames[$i]) = $Current[$i]
+                        }
+                        else 
+                        {
+                            $StrucOutColumn.@($MemberNames[$i]) = ""
+                        }
+                    }
+
+                    $ctx.Output('strucColumnOut') = $StrucOutColumn
+                }
+
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $HasColumn = $FALSE
+                    $ErrorMessage = "Something went wrong while executing the script. Following error occured: $($_.Exception.Message) at line: $($_.InvocationInfo.ScriptLineNumber)"
+                }
+
+                $ctx.Output('strHasErrorOut') = $HasError
+                $ctx.Output('strErrorMessageOut') = $ErrorMessage
+                $ctx.Output('strHasColumnOut') = $HasColumn        
+            }
+
+
+            if ($ctx.ConnectorName -eq 'CSV Import - specific value') {
+                # Capturing Parameters
+                $HasError = $FALSE
+                $ErrorMessage = "No error occurred"
+
+                $ColumnName = $ctx.Input('ColumnName')
+
+                $RowNumber = $ctx.Input('RowNumber')
+
+                $Path = $ctx.Input('Path')
+
+                Try {
+                    
+                    # choose appropriate csv delimiter !
+                    $ListOutput = Import-CSV -path $Path -delimiter ";"
+
+                    # adapt Structure and method to the individual tabel
+                    $Current = $ListOutput.$ColumnName
+
+                    if ([string]::IsNullOrEmpty($Current[$RowNumber-1])-ne $TRUE)
+                    {
+                        $CellValue = $Current[$RowNumber-1]
+                    }
+                    else 
+                    {
+                        $CellValue = ""
+                    }
+
+                    $ctx.Output('strCellValue') = $CellValue
+                }
+
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $ErrorMessage = "Something went wrong while executing the script. Following error occured: $($_.Exception.Message) at line: $($_.InvocationInfo.ScriptLineNumber)"
+                }
+
+                $ctx.Output('strHasErrorOut') = $HasError
+                $ctx.Output('strErrorMessageOut') = $ErrorMessage      
+            }
+
+
+            if ($ctx.ConnectorName -eq 'CSV Import - all rows/all columns') {
+                # Capturing Parameters
+                $HasError = $FALSE
+                $ErrorMessage = "No error occurred"
+                $Path = $ctx.Input('Path')
+                $arrStrucs = @()
+
+                Try {
+                    
+                    # choose appropriate csv delimiter !
+                    $ListOutput = Import-CSV -path $Path -delimiter ";"
+                    $ListLength = $ListOutput.Count -1
+
+                    $ColumnNames = "A,B,C,D"
+                    $ColumnNames = $ColumnNames.Split(",")
+
+                    # iterate through each row in table
+                    for ($i=0; $i -le $ListLength; $i++)
+                    {
+                        $Current = $ListOutput[$i]
+                        $newStruc = $ctx.CreateStruct('StrucOutRow')
+
+                        # get values for each column in row
+                        foreach ($j in $ColumnNames)
+                        { 
+                            # add values to row structure
+                            if ([string]::IsNullOrEmpty($Current.$j)-ne $TRUE)
+                            {
+                                $newStruc.$j = $Current.$j
+                            }
+                            else 
+                            {
+                                $newStruc.$j = ""
+                            }
+                        }
+                        # add row structure to array
+                        $arrStrucs += $newStruc	
+                    }
+                }
+
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $HasColumn = $FALSE
+                    $ErrorMessage = "Something went wrong while executing the script. Following error occured: $($_.Exception.Message) at line: $($_.InvocationInfo.ScriptLineNumber)"
+                }
+
+                $ctx.Output('arrStrucsOut') = @($arrStrucs)
+                $ctx.Output('strHasErrorOut') = $HasError
+                $ctx.Output('strErrorMessageOut') = $ErrorMessage     
+            }
+
+        ]]>
+    </script>
+    <structures>
+        <structure name="StrucOutRow">
+            <members>
+                <member name="A" isArray="false" type="String" />
+                <member name="B" isArray="false" type="String" />
+                <member name="C" isArray="false" type="String" />
+                <member name="D" isArray="false" type="String" />
+            </members>
+        </structure>
+        <structure name="StrucOutColumn">
+            <members>
+                <member name="A" isArray="false" type="String" />
+                <member name="B" isArray="false" type="String" />
+                <member name="C" isArray="false" type="String" />
+                <member name="D" isArray="false" type="String" />
+            </members>
+        </structure>
+    </structures>
+    <connectors>
+
+
+        <connector name="CSV Import - specific row/all columns" description="CSV Import" guid="01926aa7-b845-4fe8-8404-e03038ea982b">
+            <input>
+                <inputParameter name="RowNumber" type="LongInt" isArray="False" description="RowNumber" priority="1"/>
+                <inputParameter name="Path" type="String" isArray="False" description="Path" priority="2"/>
+            </input>
+            <output>
+                <outputParameter name="strHasErrorOut" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="strErrorMessageOut" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="strucStrucRowOut" type="StrucOutRow" isArray="False" description="strucStrucRowOut"/>
+                <outputParameter name="strHasRowOut" type="Boolean" isArray="False" description="HasRow boolean"/>
+            </output>
+        </connector>
+
+
+        <connector name="CSV Import - all rows/specifc column" description="CSV Import" guid="c0e3cb8a-8bd6-4d85-a71b-9bfec1c00843">
+            <input>
+                <inputParameter name="ColumnName" type="String" isArray="False" description="ColumnName" priority="1"/>
+                <inputParameter name="Path" type="String" isArray="False" description="Path" priority="2"/>
+            </input>
+            <output>
+                <outputParameter name="strHasErrorOut" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="strErrorMessageOut" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="strucColumnOut" type="StrucOutColumn" isArray="False" description="strucColumnOut"/>
+                <outputParameter name="strHasColumnOut" type="Boolean" isArray="False" description="HasColumn boolean"/>
+            </output>
+        </connector>
+
+
+        <connector name="CSV Import - specific value" description="CSV Import" guid="df478ec3-ad71-49c4-b6ea-03a94b2559e3">
+            <input>
+                <inputParameter name="ColumnName" type="String" isArray="False" description="ColumnName" priority="1"/>
+                <inputParameter name="RowNumber" type="LongInt" isArray="False" description="RowNumber" priority="1"/>
+                <inputParameter name="Path" type="String" isArray="False" description="Path" priority="1"/>
+            </input>
+            <output>
+                <outputParameter name="strHasErrorOut" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="strErrorMessageOut" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="strCellValue" type="String" isArray="Flase" description="strCellValue"/>
+            </output>
+        </connector>
+
+
+        <connector name="CSV Import - all rows/all columns" description="CSV Import" guid="cc3dd083-c375-48e8-971a-219e9c26c7e8">
+            <input>
+                <inputParameter name="Path" type="String" isArray="False" description="Path" priority="2"/>
+            </input>
+            <output>
+                <outputParameter name="strHasErrorOut" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="strErrorMessageOut" type="String" isArray="False" description="Optional error message"/>
+                <outputParameter name="arrStrucsOut" type="StrucOutRow" isArray="True" description="arrStrucsOut"/>
+            </output>
+        </connector>
+    </connectors>
+</connectorPackage>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?><connectorPackage guid="{451dc036-ee0e-4de0-8fa2-87e5bbbd03f2}" category="ODBC" language="PowerShell">
+                <script>
+                <![CDATA[
+
+			if ($ctx.ConnectorName -eq 'ODBCQuery') {
+            ###################     ODBC Abfrage
+			
+			$HasError = $false
+			$ErrorMessage = ""
+			$arrStrucs = @()
+			
+			$username = $ctx.Input('username')
+			$password = $ctx.Input('password')
+			$database = $ctx.Input('database')
+            $server = $ctx.Input('server')
+            $query = $ctx.Input('query')
+			
+                Try {
+                    $connStr = @("DSN=$server;UID=$username;PWD=$password")
+                    $DBConnection= New-OBject System.Data.odbc.odbcConnection $connStr
+                    $DBConnection.Open()                 
+                    $DBCommand=New-Object System.Data.Odbc.OdbcCommand             
+                    $DBCommand.Connection = $DBConnection
+                    $DBCommand.CommandText= $query
+                    $DBResult=$DBCommand.ExecuteReader()
+   
+                        while ($DBResult.Read()) {	                       
+                                $StrucOut = $ctx.CreateStruct('StrucOut')
+		                        $StrucOut.column_a = $DBResult.GetValue(0)
+                                $StrucOut.column_b = $DBResult.GetValue(0)
+                                $StrucOut.column_c = $DBResult.GetValue(0)
+                                $arrStrucs += $StrucOut	                        
+                        }
+
+                    DBConnection.Close()
+					
+                    # always interpret as array even if there is one element					
+                    #$ctx.Output('arrStrucs') = @($arrStrucOut)
+					
+					$ctx.Output('HasError') = $HasError
+					$ctx.Output('ErrorMessage') = $ErrorMessage
+                }
+                Catch {
+                    # Place individual error handling here
+                    $HasError = $TRUE
+                    $ErrorMessage = "$($_.Exception.Message)"
+
+                    $ctx.Output('arrStrucs') = @("")
+					$ctx.Output('HasError') = $HasError
+					$ctx.Output('ErrorMessage') = $ErrorMessage
+                }
+
+			}
+							
+            ]]>
+            </script>
+            <structures>
+                <structure name="StrucOut">
+                <members>
+                    <member name="column_a" isArray="false" type="String" />
+                    <member name="column_b" isArray="false" type="String" />
+                    <member name="column_c" isArray="false" type="DateTime" />
+                </members>
+                </structure>
+            </structures>
+         <connectors>
+		  <connector name="ODBCQuery" description="ODBCQuery" guid="8c8ae321-5137-489a-ba01-c00b97acec1f">
+                <input>
+                    <inputParameter name="username" type="String" isArray="False" description="username" priority="1"/>
+                    <inputParameter name="password" type="String" isArray="False" description="password" priority="2"/>
+                    <inputParameter name="database" type="String" isArray="False" description="database" priority="3"/>
+                    <inputParameter name="server" type="String" isArray="False" description="server" priority="4"/>
+                    <inputParameter name="query" type="String" isArray="False" description="query" priority="5"/>
+                </input>
+                <output>
+                    <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                    <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+					<outputParameter name="arrStrucOut" type="StrucOut" isArray="True" description="arrStrucs Output"/>
+                </output>
+                </connector>
+            </connectors>
+            </connectorPackage>

@@ -1,413 +1,824 @@
 <?xml version="1.0" encoding="utf-8"?>
 <connectorPackage guid="{2a32c1ff-e6ff-42e4-9827-33d194113355}" category="Active Directory" language="PowerShell">
-  <script>
-    <![CDATA[
-if ($ctx.ConnectorName -eq 'Add Active Directory User')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+    <script>
+        <![CDATA[
+        
 
-# Important parameters       
-$Password 		= $ctx.Input('Password')
-$Name			= $ctx.Input('Name')
-$Email			= $ctx.Input('Email')
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+        #########################################
+        #    Add new Active Directory User      #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Add Active Directory User') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
 
-# Creating new ADUser Account
-New-RemADUser -Name $Name -AccountPassword (ConvertTo-SecureString -String $Password -AsPlainText -Force) -email $Email -path $Path -server $Server
+            # Important parameters       
+            $Password = $ctx.Input('Password')
+            $Name = $ctx.Input('Name')
+            $Email = $ctx.Input('Email')
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
+            $ServerAdministrator = $ctx.Input('Server administrator')
+            $ServerAdministratorPassword = $ctx.Input('Server administrator password')
+            $DisplayName = $ctx.Input('DisplayName')
+            $FirstName = $ctx.Input('FirstName')
+            $LastName = $ctx.Input('LastName')
+            $Initials = $ctx.Input('Initials')
+            $SamAccountName = $ctx.Input('SamAccountName')
+            $UserPrincipalName = $ctx.Input('UserPrincipalName')
+            $ProfilePath = $ctx.Input('ProfilePath')
+            $LogonScript = $ctx.Input('LogonScript')
+            $HomeDirectory = $ctx.Input('HomeDirectory')
+            $HomeDrive = $ctx.Input('HomeDrive')
+            $JobTitle = $ctx.Input('JobTitle')
+            $Department = $ctx.Input('Department')
+            $Company = $ctx.Input('Company')
+            $OfficePhone = $ctx.Input('OfficePhone')
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Add Active Directory User Group')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
- 
-# Important parameters      
-$Name			= $ctx.Input('Group name')     
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+            Try {
+                # build a hashtable with the required parameters
+                $userParams = @{
+                    'Name' = $Name
+                    'AccountPassword' = (ConvertTo-SecureString -String $Password -AsPlainText -Force)
+                    'path' = $Path
+                    'server' = $Server
+                    #'ServerAdministrator' = $ServerAdministrator
+                    #'ServerAdministratorPassword' = $ServerAdministratorPassword
+                }
+
+                # check optional parameters for empty or null values and add defined properties to hashtable
+                if (!([string]::IsNullOrWhiteSpace($Email))) {
+                    $userParams['email'] = $Email
+                }
+                if (!([string]::IsNullOrWhiteSpace($DisplayName))) {
+                    $userParams['DisplayName'] = $DisplayName
+                }
+                if (!([string]::IsNullOrWhiteSpace($FirstName))) {
+                    $userParams['GivenName'] = $FirstName
+                }
+                if (!([string]::IsNullOrWhiteSpace($LastName))) {
+                    $userParams['Surname'] = $LastName
+                }
+                if (!([string]::IsNullOrWhiteSpace($Initials))) {
+                    $userParams['Initials'] = $Initials
+                }
+                if (!([string]::IsNullOrWhiteSpace($SamAccountName))) {
+                    $userParams['SamAccountName'] = $SamAccountName
+                }
+                if (!([string]::IsNullOrWhiteSpace($UserPrincipalName))) {
+                    $userParams['UserPrincipalName'] = $UserPrincipalName
+                }
+                if (!([string]::IsNullOrWhiteSpace($ProfilePath))) {
+                    $userParams['ProfilePath'] = $ProfilePath
+                }
+                if (!([string]::IsNullOrWhiteSpace($LogonScript))) {
+                    $userParams['ScriptPath'] = $LogonScript
+                }
+                if (!([string]::IsNullOrWhiteSpace($HomeDirectory))) {
+                    $userParams['HomeDirectory'] = $HomeDirectory
+                }
+                if (!([string]::IsNullOrWhiteSpace($HomeDrive))) {
+                    $userParams['HomeDrive'] = $HomeDrive
+                }
+                if (!([string]::IsNullOrWhiteSpace($JobTitle))) {
+                    $userParams['Title'] = $JobTitle
+                }
+                if (!([string]::IsNullOrWhiteSpace($Department))) {
+                    $userParams['Department'] = $Department
+                }
+                if (!([string]::IsNullOrWhiteSpace($Company))) {
+                    $userParams['Company'] = $Company
+                }
+                if (!([string]::IsNullOrWhiteSpace($Company))) {
+                    $userParams['Company'] = $Company
+                }
+                if (!([string]::IsNullOrWhiteSpace($OfficePhone))) {
+                    $userParams['OfficePhone'] = $OfficePhone
+                }
+                
+                # create new ADUser based on hashtable inputs
+                New-ADUser @userParams
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            Catch {
+                 # Place individual error handling here
+                 $HasError = $TRUE
+                 $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+
+            #Close Session
+            $Session | Remove-PSSession
+        }
 
 
-# Creating new AD Group
-New-RemADGroup -name $Name -path $Path -server $Server -GroupScope Global
+        #########################################
+        #    Modify Active Directory User       #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Modify Active Directory User') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+            
+            # Important parameters for modifying AD User       
+            $Name = $ctx.Input('Name')
+            $Email = $ctx.Input('Email')
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
+            $DisplayName = $ctx.Input('DisplayName')
+            $FirstName = $ctx.Input('FirstName')
+            $LastName = $ctx.Input('LastName')
+            $Initials = $ctx.Input('Initials')
+            $SamAccountName = $ctx.Input('SamAccountName')
+            $UserPrincipalName = $ctx.Input('UserPrincipalName')
+            $ProfilePath = $ctx.Input('ProfilePath')
+            $LogonScript = $ctx.Input('LogonScript')
+            $HomeDirectory = $ctx.Input('HomeDirectory')
+            $HomeDrive = $ctx.Input('HomeDrive')
+            $JobTitle = $ctx.Input('JobTitle')
+            $Department = $ctx.Input('Department')
+            $Company = $ctx.Input('Company')
+            $OfficePhone = $ctx.Input('OfficePhone')
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Delete Active Directory User Group')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
- 
-# Important parameters      
-$Name			= $ctx.Input('Group name')     
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+            try {
+                # build a hashtable with the required parameters
+                $userParams = @{
+                    'path' = $Path
+                    #'ServerAdministrator' = $ServerAdministrator
+                    #'ServerAdministratorPassword' = $ServerAdministratorPassword
+                }
+
+                # check optional parameters for empty or null values and add defined properties to hashtable
+                if (!([string]::IsNullOrWhiteSpace($Email))) {
+                    $userParams['email'] = $Email
+                }
+                if (!([string]::IsNullOrWhiteSpace($DisplayName))) {
+                    $userParams['DisplayName'] = $DisplayName
+                }
+                if (!([string]::IsNullOrWhiteSpace($FirstName))) {
+                    $userParams['GivenName'] = $FirstName
+                }
+                if (!([string]::IsNullOrWhiteSpace($LastName))) {
+                    $userParams['Surname'] = $LastName
+                }
+                if (!([string]::IsNullOrWhiteSpace($Initials))) {
+                    $userParams['Initials'] = $Initials
+                }
+                if (!([string]::IsNullOrWhiteSpace($SamAccountName))) {
+                    $userParams['SamAccountName'] = $SamAccountName
+                }
+                if (!([string]::IsNullOrWhiteSpace($UserPrincipalName))) {
+                    $userParams['UserPrincipalName'] = $UserPrincipalName
+                }
+                if (!([string]::IsNullOrWhiteSpace($ProfilePath))) {
+                    $userParams['ProfilePath'] = $ProfilePath
+                }
+                if (!([string]::IsNullOrWhiteSpace($LogonScript))) {
+                    $userParams['ScriptPath'] = $LogonScript
+                }
+                if (!([string]::IsNullOrWhiteSpace($HomeDirectory))) {
+                    $userParams['HomeDirectory'] = $HomeDirectory
+                }
+                if (!([string]::IsNullOrWhiteSpace($HomeDrive))) {
+                    $userParams['HomeDrive'] = $HomeDrive
+                }
+                if (!([string]::IsNullOrWhiteSpace($JobTitle))) {
+                    $userParams['Title'] = $JobTitle
+                }
+                if (!([string]::IsNullOrWhiteSpace($Department))) {
+                    $userParams['Department'] = $Department
+                }
+                if (!([string]::IsNullOrWhiteSpace($Company))) {
+                    $userParams['Company'] = $Company
+                }
+                if (!([string]::IsNullOrWhiteSpace($OfficePhone))) {
+                    $userParams['OfficePhone'] = $OfficePhone
+                }
+                
+
+                # Modifying AD User Account
+                Set-ADUser -identity $Name -partition $Path -Replace @userParams -server $Server
+                Set-ADAccountPassword -identity $Name -Reset -NewPassword (ConvertTo-SecureString -AsPlainText $ctx.Input('Password') -Force)
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+
+            #Close Session
+            $Session | Remove-PSSession
+        }
 
 
-# Deleting AD Group
-Remove-RemADGroup -identity $Name -partition $Path -server $Server -Confirm:$false
+        #########################################
+        #     Delete Active Directory User      #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Delete Active Directory User') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Modify Active Directory User')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
- 
-# Important parameters for modifying AD User       
-$Name			= $ctx.Input('Name')
-$Email 			= $ctx.Input('Email')
-$Password		= $ctx.Input('Password')   
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+            # Important parameters      
+            $Name = $ctx.Input('Name')
+            #$Path			= $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
 
-# Modifying AD User Account
-Set-RemADUser -identity $Name -partition $Path -Replace @{mail="$email"} -server $Server
-Set-RemAdAccountPassword -identity $Name -Reset -NewPassword (ConvertTo-SecureString -AsPlainText $ctx.Input('Password') -Force)
+            try {
+                # Removing AD User
+                Remove-ADUser -identity $Name -server $Server -Confirm:$false
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Delete Active Directory User')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+            
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+            
+            #Close Session
+            $Session | Remove-PSSession
+        }
 
-# Important parameters      
-$Name			= $ctx.Input('Name')
-#$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
 
-# Removing AD User
-Remove-RemADUser -identity $Name -server $Server -Confirm:$false
+        #########################################
+        #    Add Active Directory User Group    #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Add Active Directory User Group') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+            
+            # Important parameters      
+            $Name = $ctx.Input('Group name')     
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Reset Password')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+            try {
+                # Creating new AD Group
+                New-ADGroup -name $Name -path $Path -server $Server -GroupScope Global
 
-# Important parameters   
-$Name			= $ctx.Input('Name')
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
 
-# Setting flag on user for changing password at next logon
-Set-RemADUser -Identity $Name -ChangePasswordAtLogon $true -server $Server -partition $Path
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Lock Active Directory User')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+            #Close Session
+            $Session | Remove-PSSession
+        }
 
-# Important parameters      
-$Name			= $ctx.Input('Name')
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
 
-# Disable AD User Account
-Disable-RemADAccount -Identity $Name -server $Server -partition $Path
+        #########################################
+        #  Delete Active Directory User Group   #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Delete Active Directory User Group') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+            
+            # Important parameters      
+            $Name = $ctx.Input('Group name')     
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Unlock Active Directory User')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+            try {
+                # Deleting AD Group
+                Remove-ADGroup -identity $Name -partition $Path -server $Server -Confirm:$false
 
-# Important parameters      
-$Name			= $ctx.Input('Name')
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+            
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
 
-# Unlock AD User Account
-Enable-RemADAccount -Identity $Name -server $Server -partition $Path
+            #Close Session
+            $Session | Remove-PSSession
+        }
+        
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Add Active Directory User to Usergroup')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+        #########################################
+        # Reset Active Directory User Password  #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Reset Password') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
 
-# Important parameters     
-$Name			= $ctx.Input('Name')
-$Groupname		= $ctx.Input('Group name')
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+            # Important parameters   
+            $Name = $ctx.Input('Name')
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
 
-# Add User to user group
-Add-RemADGroupMember $Groupname -members $Name -server $Server -partition $Path
+            try {
+                # Setting flag on user for changing password at next logon
+                Set-ADUser -Identity $Name -ChangePasswordAtLogon $true -server $Server -partition $Path
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Remove Active Directory User from Usergroup')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
 
-# Important parameters     
-$Name			= $ctx.Input('Name')
-$Groupname		= $ctx.Input('Group name')
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
 
-# Remove User from user group
-Remove-RemADGroupMember $Groupname -members $Name -server $Server -partition $Path -Confirm:$false
+            #Close Session
+            $Session | Remove-PSSession
+        }
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Export Active Directory Users')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
 
-# Important parameters     
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
-$Export_Path 	= $ctx.Input('Export File path')
+        #########################################
+        #      Lock Active Directory User       #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Lock Active Directory User') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
 
-# Get AD user from AD
-Get-RemADUser -Filter * -searchbase $Path -server $Server -Properties Name, DisplayName, EmailAddress | select Name, DisplayName, EmailAddress | Export-CSV $Export_Path
+            # Important parameters      
+            $Name = $ctx.Input('Name')
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Export Active Directory Usergroups')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+            try {
+                # Disable AD User Account
+                Disable-ADAccount -Identity $Name -server $Server -partition $Path
 
-# Important parameters     
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
-$Export_Path 	= $ctx.Input('Export File path')
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+            
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
 
-# Get AD Groups from AD
-Get-RemADGroup -Filter *  -searchbase $Path -server $Server -Properties Name, DisplayName | select Name, DisplayName | Export-CSV $Export_Path
+            #Close Session
+            $Session | Remove-PSSession
+        }
 
-#Close Session
-$Session | Remove-PSSession
-}
-if ($ctx.ConnectorName -eq 'Export Computernames')
-{
-# User Credentials
-$secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
-$UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
-$Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
-Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
-Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
 
-# Important parameters     
-$Path			= $ctx.Input('Path')
-$Server			= $ctx.Input('Server')
-$Export_Path 	= $ctx.Input('Export File path')
+        #########################################
+        #     Unlock Active Directory User      #
+        #########################################
+        if ($ctx.ConnectorName -eq 'Unlock Active Directory User') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
 
-# Get AD Groups from AD
-Get-RemADComputer -Filter *  -SearchBase $Path -server $Server -Properties DNSHostName | select DNSHostName | Export-CSV $Export_Path
+            # Important parameters      
+            $Name = $ctx.Input('Name')
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
 
-#Close Session
-$Session | Remove-PSSession
-}    
-]]>
-  </script>
-  <connectors>
-    <connector name="Add Active Directory User Group" description="Add Active Directory User Group" guid="e94627d0-497f-4935-9fd9-12b9fe83823f">
-      <input>
-        <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="1"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Delete Active Directory User Group" description="Delete Active Directory User Group" guid="e94627d0-497f-4935-9fd9-12b9fe87645e">
-      <input>
-        <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="1"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Add Active Directory User" description="Add Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83811a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
-        <inputParameter name="Password" type="String" isArray="false" description="Password of the Active Directory User" priority="2"/>
-        <inputParameter name="Email" type="String" isArray="false" optional="true" description="Email of the Active Directory User" priority="3"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="4"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="5"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="6"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="7"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Modify Active Directory User" description="Modify Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83822a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
-        <inputParameter name="Password" type="String" isArray="false" description="Password of the Active Directory User" priority="2"/>
-        <inputParameter name="Email" type="String" isArray="false" optional="true" description="Email of the Active Directory User" priority="3"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="4"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="5"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="6"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="7"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Delete Active Directory User" description="Delete Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83833a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" priority="1"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="3"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="4"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Reset Password" description="Reset Password of Active Directory User at next logon" guid="e94627d0-497f-4935-9fd9-12b9fe83844a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Lock Active Directory User" description="Lock Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83855a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Unlock Active Directory User" description="Unlock Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83866a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Add Active Directory User to Usergroup" description="Add Active Directory User to Usergroup" guid="e94627d0-497f-4935-9fd9-12b9fe83877a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
-        <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="2"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="3"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="4"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="5"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="6"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Remove Active Directory User from Usergroup" description="Remove Active Directory User from Usergroup" guid="e94627d0-497f-4935-9fd9-12b9fe89855a">
-      <input>
-        <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
-        <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="2"/>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="3"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="4"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="5"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="6"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Export Active Directory Users" description="Export Active Directory Users to *.csv File" guid="e94627d0-497f-4935-9fd9-12b9fe09721a">
-      <input>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="1"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
-        <inputParameter name="Export File path" type="String" isArray="false" description="Insert export file path 'C:\export-file-name.csv' " priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Export Active Directory Usergroups" description="Export Active Directory Usergroups to *.csv File" guid="e94627d0-497f-4935-9fd9-12b9fe98672a">
-      <input>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="1"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
-        <inputParameter name="Export File path" type="String" isArray="false" description="Insert export file path 'C:\export-file-name.csv' " priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-    <connector name="Export Computernames" description="Export Computernames from Active Directory to *.csv File" guid="e94627d0-497f-4935-9fd9-12b9fe08612a">
-      <input>
-        <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="1"/>
-        <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
-        <inputParameter name="Export File path" type="String" isArray="false" description="Insert export file path 'C:\export-file-name.csv' " priority="3"/>
-        <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
-        <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
-      </input>
-      <output/>
-    </connector>
-  </connectors>
+            try {
+                # Unlock AD User Account
+                Enable-ADAccount -Identity $Name -server $Server -partition $Path
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+
+            #Close Session
+            $Session | Remove-PSSession
+        }
+
+
+        ##########################################
+        # Add Active Directory User to Usergroup #
+        ##########################################
+        if ($ctx.ConnectorName -eq 'Add Active Directory User to Usergroup') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+
+            # Important parameters     
+            $Name = $ctx.Input('Name')
+            $Groupname = $ctx.Input('Group name')
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
+
+            try {
+                # Add User to user group
+                Add-ADGroupMember $Groupname -members $Name -server $Server -partition $Path
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+
+            #Close Session
+            $Session | Remove-PSSession
+        }
+
+
+        ###############################################
+        # Remove Active Directory User from Usergroup #
+        ###############################################
+        if ($ctx.ConnectorName -eq 'Remove Active Directory User from Usergroup') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+
+            # Important parameters     
+            $Name = $ctx.Input('Name')
+            $Groupname = $ctx.Input('Group name')
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
+
+            try {
+                # Remove User from user group
+                Remove-ADGroupMember $Groupname -members $Name -server $Server -partition $Path -Confirm:$false
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+
+            #Close Session
+            $Session | Remove-PSSession
+        }
+
+
+        ##########################################
+        #     Export Active Directory Users      #
+        ##########################################
+        if ($ctx.ConnectorName -eq 'Export Active Directory Users') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+
+            # Important parameters     
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
+            $Export_Path = $ctx.Input('Export File path')
+
+            try {
+                # Get AD user from AD
+                Get-ADUser -Filter * -searchbase $Path -server $Server -Properties Name, DisplayName, EmailAddress | Select-Object Name, DisplayName, EmailAddress | Export-CSV $Export_Path
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+            
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+
+            #Close Session
+            $Session | Remove-PSSession
+        }
+
+
+        ##########################################
+        #   Export Active Directory Usergroups   #
+        ##########################################
+        if ($ctx.ConnectorName -eq 'Export Active Directory Usergroups') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+
+            # Important parameters     
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
+            $Export_Path = $ctx.Input('Export File path')
+
+            try {
+                # Get AD Groups from AD
+                Get-ADGroup -Filter *  -searchbase $Path -server $Server -Properties Name, DisplayName | Select-Object Name, DisplayName | Export-CSV $Export_Path
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+            
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+            
+            #Close Session
+            $Session | Remove-PSSession
+        }
+
+
+        ##########################################
+        #          Export Computernames          #
+        ##########################################
+        if ($ctx.ConnectorName -eq 'Export Computernames') {
+            # User Credentials
+            $secpasswd = ConvertTo-SecureString $ctx.Input('Server administrator password') -AsPlainText -Force
+            $UserCredential = New-Object System.Management.Automation.PSCredential($ctx.Input('Server administrator'), $secpasswd)
+            $Session = New-PSSession -ComputerName $ctx.Input('Server') -Authentication Kerberos -Credential $UserCredential
+            Invoke-Command -session $Session -script { Import-Module ActiveDirectory }
+            Import-PSSession -session $Session -module ActiveDirectory -prefix Rem
+
+            # Important parameters     
+            $Path = $ctx.Input('Path')
+            $Server = $ctx.Input('Server')
+            $Export_Path = $ctx.Input('Export File path')
+
+            try {
+                # Get AD Groups from AD
+                Get-ADComputer -Filter *  -SearchBase $Path -server $Server -Properties DNSHostName | Select-Object DNSHostName | Export-CSV $Export_Path
+
+                $HasError = $FALSE
+                $ErrorMessage = "No errors occurred."
+            }
+            catch {
+                # Place individual error handling here
+                $HasError = $TRUE
+                $ErrorMessage = "Something went wrong while executing the script.`r`n`r`n Following error occured: $($_.Exception.Message)"
+            }
+            
+            # save output
+            $ctx.Output('HasError') = $HasError
+            $ctx.Output('ErrorMessage') = $ErrorMessage
+
+            #Close Session
+            $Session | Remove-PSSession
+        }    
+
+        ]]>
+    </script>
+    <connectors>
+        <connector name="Add Active Directory User Group" description="Add Active Directory User Group" guid="e94627d0-497f-4935-9fd9-12b9fe83823f">
+            <input>
+                <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="1"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Delete Active Directory User Group" description="Delete Active Directory User Group" guid="e94627d0-497f-4935-9fd9-12b9fe87645e">
+            <input>
+                <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="1"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Add Active Directory User" description="Add Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83811a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
+                <inputParameter name="Password" type="String" isArray="false" description="Password of the Active Directory User" priority="2"/>
+                <inputParameter name="Email" type="String" isArray="false" optional="true" description="Email of the Active Directory User" priority="3"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="4"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="5"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="6"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="7"/>
+                <inputParameter name="DisplayName" type="String" isArray="false" optional="true" description="Display name of the user" priority="8"/>
+                <inputParameter name="FirstName" type="String" isArray="false" optional="true" description="first name of user (given name)" priority="9"/>
+                <inputParameter name="LastName" type="String" isArray="false" optional="true" description="last name of user (surname)" priority="10"/>
+                <inputParameter name="Initials" type="String" isArray="false" optional="true" description="Initials of user (like W. in George W. Bush)" priority="11"/>
+                <inputParameter name="SamAccountName" type="String" isArray="false" optional="true" description="The pre-Windows 2000 logon name (like fmu in OMNIDOMAINfmu)" priority="12"/>
+                <inputParameter name="UserPrincipalName" type="String" isArray="false" optional="true" description="The user logon name (like frank.munkert@omnidomain.local)" priority="13"/>
+                <inputParameter name="ProfilePath" type="String" isArray="false" optional="true" description="Path to the user's profile" priority="13"/>
+                <inputParameter name="LogonScript" type="String" isArray="false" optional="true" description="Path to the user's logon script" priority="14"/>
+                <inputParameter name="HomeDirectory" type="String" isArray="false" optional="true" description="Home directory of the user" priority="15"/>
+                <inputParameter name="HomeDrive" type="String" isArray="false" optional="true" description="Home drive of the user (such as Z)" priority="16"/>
+                <inputParameter name="JobTitle" type="String" isArray="false" optional="true" description="Job title of the user" priority="17"/>
+                <inputParameter name="Department" type="String" isArray="false" optional="true" description="Department of the user" priority="18"/>
+                <inputParameter name="Company" type="String" isArray="false" optional="true" description="Company name" priority="19"/>
+                <inputParameter name="OfficePhone" type="String" isArray="false" optional="true" description="Office phone number" priority="19"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+            </output>
+        </connector>
+        <connector name="Modify Active Directory User" description="Modify Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83822a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
+                <inputParameter name="Password" type="String" isArray="false" description="Password of the Active Directory User" priority="2"/>
+                <inputParameter name="Email" type="String" isArray="false" optional="true" description="Email of the Active Directory User" priority="3"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="4"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="5"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="6"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="7"/>
+                <inputParameter name="DisplayName" type="String" isArray="false" optional="true" description="Display name of the user" priority="8"/>
+                <inputParameter name="FirstName" type="String" isArray="false" optional="true" description="first name of user (given name)" priority="9"/>
+                <inputParameter name="LastName" type="String" isArray="false" optional="true" description="last name of user (surname)" priority="10"/>
+                <inputParameter name="Initials" type="String" isArray="false" optional="true" description="Initials of user (like W. in George W. Bush)" priority="11"/>
+                <inputParameter name="SamAccountName" type="String" isArray="false" optional="true" description="The pre-Windows 2000 logon name (like fmu in OMNIDOMAINfmu)" priority="12"/>
+                <inputParameter name="UserPrincipalName" type="String" isArray="false" optional="true" description="The user logon name (like frank.munkert@omnidomain.local)" priority="13"/>
+                <inputParameter name="ProfilePath" type="String" isArray="false" optional="true" description="Path to the user's profile" priority="13"/>
+                <inputParameter name="LogonScript" type="String" isArray="false" optional="true" description="Path to the user's logon script" priority="14"/>
+                <inputParameter name="HomeDirectory" type="String" isArray="false" optional="true" description="Home directory of the user" priority="15"/>
+                <inputParameter name="HomeDrive" type="String" isArray="false" optional="true" description="Home drive of the user (such as Z)" priority="16"/>
+                <inputParameter name="JobTitle" type="String" isArray="false" optional="true" description="Job title of the user" priority="17"/>
+                <inputParameter name="Department" type="String" isArray="false" optional="true" description="Department of the user" priority="18"/>
+                <inputParameter name="Company" type="String" isArray="false" optional="true" description="Company name" priority="19"/>
+                <inputParameter name="OfficePhone" type="String" isArray="false" optional="true" description="Office phone number" priority="19"/>
+            </input>
+            <output>
+                <outputParameter name="HasError" type="Boolean" isArray="False" description="HasError boolean"/>
+                <outputParameter name="ErrorMessage" type="String" isArray="False" description="Optional error message"/>
+            </output>
+        </connector>
+        <connector name="Delete Active Directory User" description="Delete Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83833a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" priority="1"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="3"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="4"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Reset Password" description="Reset Password of Active Directory User at next logon" guid="e94627d0-497f-4935-9fd9-12b9fe83844a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Lock Active Directory User" description="Lock Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83855a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Unlock Active Directory User" description="Unlock Active Directory User" guid="e94627d0-497f-4935-9fd9-12b9fe83866a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="2"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Add Active Directory User to Usergroup" description="Add Active Directory User to Usergroup" guid="e94627d0-497f-4935-9fd9-12b9fe83877a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
+                <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="2"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="3"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="4"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="5"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="6"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Remove Active Directory User from Usergroup" description="Remove Active Directory User from Usergroup" guid="e94627d0-497f-4935-9fd9-12b9fe89855a">
+            <input>
+                <inputParameter name="Name" type="String" isArray="false" description="Name of the Active Directory User" priority="1"/>
+                <inputParameter name="Group name" type="String" isArray="false" description="Name of the Active Directory Group" priority="2"/>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="3"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="4"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="5"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="6"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Export Active Directory Users" description="Export Active Directory Users to *.csv File" guid="e94627d0-497f-4935-9fd9-12b9fe09721a">
+            <input>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="1"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
+                <inputParameter name="Export File path" type="String" isArray="false" description="Insert export file path 'C:\export-file-name.csv' " priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Export Active Directory Usergroups" description="Export Active Directory Usergroups to *.csv File" guid="e94627d0-497f-4935-9fd9-12b9fe98672a">
+            <input>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="1"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
+                <inputParameter name="Export File path" type="String" isArray="false" description="Insert export file path 'C:\export-file-name.csv' " priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+        <connector name="Export Computernames" description="Export Computernames from Active Directory to *.csv File" guid="e94627d0-497f-4935-9fd9-12b9fe08612a">
+            <input>
+                <inputParameter name="Path" type="String" isArray="false" description="Path of the Active Directory,Please use this form:'OU=Users,OU=Sitename,DC=omnitracker,DC=com'" priority="1"/>
+                <inputParameter name="Server" type="String" isArray="false" description="Servername" priority="2"/>
+                <inputParameter name="Export File path" type="String" isArray="false" description="Insert export file path 'C:\export-file-name.csv' " priority="3"/>
+                <inputParameter name="Server administrator" type="String" isArray="false" description="Target Server administrator" priority="4"/>
+                <inputParameter name="Server administrator password" type="String" isArray="false" description="Target Server administrator password" priority="5"/>
+            </input>
+            <output/>
+        </connector>
+    </connectors>
 </connectorPackage>
