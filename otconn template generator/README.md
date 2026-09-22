@@ -23,11 +23,13 @@ This connector package will create a new .otconn file.
 	- BPMN category
 	- BPMN structure
 	- BPMN Tranlsation dictionary + entries
-- How to use the import the files:
-	- First you need to copy the .otconn file within the connectors folder of your OMNITRACKER installation 
-	- You can import the .bpmn file within your BPMN Engine of OMNITRACKER (Start page --> BPMN --> Import BPMN file)
+- How to use the import files:
+	- First you need to copy the .otconn file within the connectors folder of your OMNITRACKER installation
+	- Afterwards, you need to restart the OMNITRACKER Server. This step is necessary to make newly added connectors available.
+	- Now you can import the .bpmn file within your BPMN Engine of OMNITRACKER (Start page --> BPMN --> Import BPMN file)
 	- Since the diagram is not connected to any OMNITRACKER folders or fields, you can import it in any OMNITRACKER environment
 	- You can start the process directly within the diagram editor or within the process portal
+
 
 
 
